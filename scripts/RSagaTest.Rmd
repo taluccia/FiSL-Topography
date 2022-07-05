@@ -1,0 +1,42 @@
+---
+title: "Terrain with RSaga Test"
+author: "Anna Talucci"
+date: '2022-06-27'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Overview
+
+
+[Link to RSAGA Vignette](https://cran.r-project.org/web/packages/RSAGA/vignettes/RSAGA.html)
+
+# Packages
+
+#$ Define
+
+```{r}
+rsaga.path <-"/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RSAGA"
+```
+/Library
+# Set up RSAGA environment
+```{r}
+library(RSAGA)
+```
+
+```{r}
+env <- rsaga.env(path=rsaga.path) 
+```
+
+
+```{r}
+rsaga.geoprocessor(lib = "ta_morphometry", module = "Slope, Aspect, Curvature",
+                   param = list(ELEVATION = paste(getwd(),"/dem.sgrd", sep = ""), 
+                                SLOPE = paste(getwd(),"/slope.sgrd", sep = "")),
+                   env = env)
+```
+
+
+# Data

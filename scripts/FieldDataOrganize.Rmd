@@ -1,0 +1,168 @@
+---
+title: "Field data"
+author: "Anna Talucci"
+date: '2022-06-21'
+output: html_document
+---
+
+
+# Overview
+
+# Packages
+
+```{r}
+library(tidyverse)
+library(sp)
+library(sf)
+library(ids)
+```
+
+# Data
+
+```{r}
+field = read.csv("../data/Field/AK_CA_Burned_Plot_Data_1983_2016.csv")
+```
+
+```{r}
+head(field)
+```
+```{r}
+field %>% dplyr::select(ecoregion_name_l2) %>% unique()
+```
+
+# Filter by region
+
+```{r}
+nwt_field = field %>% filter(ecoregion_name_l2 %in% c("Taiga Plains", "Taiga Shield"))
+```
+
+```{r}
+ak_field = field %>% filter(ecoregion_name_l2 %in% c("Alaska Boreal Interior", "Boreal Cordillera"))
+```
+
+```{r}
+sk_field = field %>% filter(ecoregion_name_l2 %in% c("Boreal Plains", "Softwood Shield"))
+```
+
+```{r}
+nwt_plains = field %>% filter(ecoregion_name_l2 == "Taiga Plains")
+nwt_shield = field %>% filter(ecoregion_name_l2 == "Taiga Shield")
+```
+# Range of Latitude and Longitude
+
+## NWT
+```{r}
+min(nwt_field$latitude)
+max(nwt_field$latitude)
+```
+
+```{r}
+min(nwt_field$longitude)
+max(nwt_field$longitude)
+```
+
+```{r}
+min(nwt_plains$latitude)
+max(nwt_plains$latitude)
+```
+
+```{r}
+min(nwt_plains$longitude)
+max(nwt_plains$longitude)
+```
+```{r}
+min(nwt_shield$latitude)
+max(nwt_shield$latitude)
+```
+
+```{r}
+min(nwt_shield$longitude)
+max(nwt_shield$longitude)
+```
+
+# AK
+```{r}
+min(nwt_field$latitude)
+max(nwt_field$latitude)
+```
+
+```{r}
+min(ak_field$longitude)
+max(ak_field$longitude)
+```
+
+# SK
+```{r}
+min(sk_field$latitude)
+max(sk_field$latitude)
+```
+
+```{r}
+min(sk_field$longitude)
+max(sk_field$longitude)
+```
+```{r}
+nrow(nwt_shield)
+```
+
+
+```{r}
+nwt_shield %>% dplyr::select(project_id) %>% n_distinct()
+```
+
+# Add Unique ID
+
+```{r eval=FALSE, include=FALSE}
+nwt_shield %>% 
+  mutate(UniqueId = random_id(n= 190, bytes = 4)) %>%
+  dplyr::select(UniqueId, IDobj:geometry)
+```
+
+# Write to csv
+```{r eval=FALSE, include=FALSE}
+write.csv(nwt_field, "../outputs/nwt_field.csv", row.names=FALSE)
+write.csv(ak_field, "../outputs/ak_field.csv", row.names=FALSE)
+write.csv(sk_field, "../outputs/sk_field.csv", row.names=FALSE)
+```
+
+```{r eval=FALSE, include=FALSE}
+write.csv(nwt_shield, "../outputs/nwt_shield.csv", row.names=FALSE)
+```
+
+# Convert to point shapefile with WGS 84 
+For NWT Shield points for testing topo variable calculations
+```{r}
+head(nwt_shield) 
+```
+
+```{r}
+nwt_shield2 = nwt_shield %>% dplyr::select(project_id:longitude)
+```
+## Projection
+```{r}
+wgs_proj = "+proj=longlat +datum=WGS84 +no_defs"
+```
+
+```{r}
+coords_df = cbind(nwt_shield2$longitude, nwt_shield2$latitude)
+df_pt <- SpatialPointsDataFrame(coords_df, proj4string = CRS(wgs_proj), data = nwt_shield2)
+```
+
+# Transform from sp to sf
+
+```{r}
+df_pt_sf = st_as_sf(df_pt)
+```
+```{r}
+head(df_pt_sf)
+```
+
+```{r}
+plot(st_geometry(df_pt_sf))
+```
+
+## Write to shapefile
+
+```{r eval=FALSE, include=FALSE}
+st_write(df_pt_sf, "../outputs/NWTshieldPoints.shp", driver="ESRI Shapefile")
+```

@@ -1,0 +1,213 @@
+---
+title: "NWT Shield Field & Tagee Terrain"
+author: "Anna Talucci"
+date: '2022-06-23'
+output: html_document
+---
+
+# Overview
+Data inspection of Tagee Terrain variables
+# Packages
+
+```{r}
+library(tidyverse)
+```
+
+# Data
+
+```{r}
+nwtfielddata = read.csv("../data/Field/nwt_shield.csv")
+nwtterrain = read.csv("../data/TageeTest/NWTShieldTagee.csv")
+arctic = read.csv("../data/TageeTest/NWTShieldArctic.csv")
+```
+
+
+```{r}
+head(nwtfielddata)
+head(nwtterrain)
+head(arctic)
+```
+
+```{r}
+terrain = nwtterrain %>% 
+  dplyr::select(prjct_d, latitud, longitd, Aspect:VerticalCurvature) %>%
+  dplyr::rename(project_id = prjct_d, latitude = latitud, longitude = longitd)
+
+terrain
+  
+```
+
+```{r}
+arcticDEM = arctic %>% 
+  dplyr::select(prjct_d, latitud, longitd, Aspect:VerticalCurvature) %>%
+  dplyr::rename(project_id = prjct_d, 
+                latitude = latitud, 
+                longitude = longitd, 
+                ArcAspect =Aspect, 
+                ArcEastness = Eastness, 
+                ArcElevation = Elevation, 
+                ArcGausCurv = GaussianCurvature, 
+                ArcHillshade = Hillshade, 
+                ArcHorizCurv = HorizontalCurvature, 
+                ArcMaxCurv = MaximalCurvature, 
+                ArcMeanCurv = MeanCurvature, 
+                ArcMinCurv = MinimalCurvature, 
+                ArcNorthness = Northness, 
+                ArcShapeIndex = ShapeIndex, 
+                ArcSlope = Slope, 
+                ArcVertCurv = VerticalCurvature)
+
+arcticDEM
+  
+```
+
+```{r}
+df = merge(terrain, nwtfielddata, by = c("project_id", "latitude", "longitude"))
+```
+
+```{r}
+df1 = merge(arcticDEM, nwtfielddata, by = c("project_id", "latitude", "longitude"))
+```
+
+```{r}
+df2 = merge(arcticDEM, df, by = c("project_id", "latitude", "longitude"))
+```
+
+```{r}
+head(df2)
+```
+```{r}
+df2 %>% dplyr::select(project_id, ArcElevation, Elevation, elevation)
+
+```
+
+# Visualize data
+
+## Elevation
+```{r}
+df %>% filter(elevation > 0) %>% 
+  ggplot(., aes(x=elevation, y=Elevation)) +
+  geom_point() +
+  xlab("Field Elevation") +
+  ylab("DEM Elevation")
+```
+
+
+```{r}
+df1 %>% filter(elevation > 0) %>% 
+  ggplot(., aes(x=elevation, y=Elevation)) +
+  geom_point() +
+  xlab("Field Elevation") +
+  ylab("DEM Elevation")
+```
+
+```{r}
+df2 %>% filter(Elevation > 0) %>% 
+  ggplot(., aes(x=ArcElevation, y=Elevation)) +
+  geom_point() 
+```
+
+## Slope
+```{r}
+df %>% filter(slope > 0) %>% 
+  ggplot(., aes(x=slope, y=Slope)) +
+  geom_point() +
+  xlab("Field slope") +
+  ylab("DEM Slope")
+```
+
+```{r}
+df1 %>% filter(slope > 0) %>% 
+  ggplot(., aes(x=slope, y=Slope)) +
+  geom_point() +
+  xlab("Field slope") +
+  ylab("DEM Slope")
+```
+## Aspect
+
+```{r}
+df %>% filter(aspect > 0) %>% 
+  ggplot(., aes(x=aspect, y=Aspect)) +
+  geom_point() +
+  xlab("Field aspect") +
+  ylab("DEM Aspect")
+```
+
+## Prop SOL combusted vs. Vertical curvature
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=VerticalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Slope)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=ShapeIndex)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Northness)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MinimalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MeanCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MaximalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=HorizontalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Hillshade)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=GaussianCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Elevation)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Eastness)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Aspect)) +
+  geom_point() 
+```
