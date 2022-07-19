@@ -11,6 +11,7 @@ Data inspection of Tagee Terrain variables
 
 ```{r}
 library(tidyverse)
+library(cowplot)
 ```
 
 # Data
@@ -19,6 +20,7 @@ library(tidyverse)
 nwtfielddata = read.csv("../data/Field/nwt_shield.csv")
 nwtterrain = read.csv("../data/TageeTest/NWTShieldTagee.csv")
 arctic = read.csv("../data/TageeTest/NWTShieldArctic.csv")
+tpi = read.csv("../data/TPI/NWTShieldFabDemTPI.csv")
 ```
 
 
@@ -26,14 +28,41 @@ arctic = read.csv("../data/TageeTest/NWTShieldArctic.csv")
 head(nwtfielddata)
 head(nwtterrain)
 head(arctic)
+head(tpi)
+```
+# Field moisture class add
+1=xeric, 2=subxeric, 3=subxeric to mesic, 4=mesic, 5=submesic, 6=subhygric
+
+```{r}
+field = df %>% 
+  mutate(moistureClass = ifelse(moisture==1, "xeric", 
+                                ifelse(moisture==2, "subxeric",
+                                       ifelse(moisture==3, "subxeric-mesic",
+                                              ifelse(moisture==4, "mesic", 
+                                                     ifelse(moisture==5, "submesic", 
+                                                            ifelse(moisture==6, "subhygric", "NA")))))))
+
 ```
 
+```{r}
+field$moistureClass <- factor(field$moistureClass, levels=c("xeric", "subxeric", "subxeric-mesic", "mesic", "submesic", "subhygric"))
+```
+
+# Data Organize
 ```{r}
 terrain = nwtterrain %>% 
   dplyr::select(prjct_d, latitud, longitd, Aspect:VerticalCurvature) %>%
   dplyr::rename(project_id = prjct_d, latitude = latitud, longitude = longitd)
 
 terrain
+  
+```
+```{r}
+tpi1 = tpi %>% 
+  dplyr::select(prjct_d, latitud, longitd, ASPTR:TPI450, elevation) %>%
+  dplyr::rename(project_id = prjct_d, latitude = latitud, longitude = longitd)
+
+tpi1
   
 ```
 
@@ -62,11 +91,14 @@ arcticDEM
 ```
 
 ```{r}
-df = merge(terrain, nwtfielddata, by = c("project_id", "latitude", "longitude"))
+df = merge(terrain, field, by = c("project_id", "latitude", "longitude"))
 ```
 
 ```{r}
-df1 = merge(arcticDEM, nwtfielddata, by = c("project_id", "latitude", "longitude"))
+df_tpi = merge(tpi1, field, by = c("project_id", "latitude", "longitude"))
+```
+```{r}
+df1 = merge(arcticDEM, field, by = c("project_id", "latitude", "longitude"))
 ```
 
 ```{r}
@@ -74,15 +106,193 @@ df2 = merge(arcticDEM, df, by = c("project_id", "latitude", "longitude"))
 ```
 
 ```{r}
-head(df2)
+head(df)
 ```
+
+# Difference in elevation
 ```{r}
-df2 %>% dplyr::select(project_id, ArcElevation, Elevation, elevation)
+df2 %>% 
+  dplyr::select(project_id, ArcElevation, Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  mutate(ArcField = elevation-ArcElevation) %>%
+  mutate(FABField = elevation - Elevation) 
+
+```
+
+```{r}
+df2 %>% 
+  dplyr::select(project_id, ArcElevation, Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  mutate(ArcField = elevation-ArcElevation) %>%
+  mutate(FABField = elevation - Elevation) %>%
+   summarise(across(ArcField:FABField, list(min = min, max = max, mean = mean)))
+
+```
+
+### Remove outliers
+NWT.sf.239
+NWT.sf.63
+```{r}
+target = c("NWT.sf.239", "NWT.sf.63")
+df2 %>% 
+  dplyr::select(project_id, ArcElevation, Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  filter(!project_id %in% target) %>%
+  mutate(ArcField = elevation-ArcElevation) %>%
+  mutate(FABField = elevation - Elevation) %>%
+   summarise(across(ArcField:FABField, list(min = min, max = max, mean = mean)))
 
 ```
 
 # Visualize data
+df is Terrain from FABDEM and field data
+```{r}
+head(df)
+```
 
+
+
+## Moisture classes vs Form Attributes
+
+```{r}
+meanCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=MeanCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Mean Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+meanCurv
+```
+```{r}
+maxCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=MaximalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Max Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+maxCurv
+```
+
+```{r}
+minCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=MinimalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Min Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+minCurv
+```
+
+```{r}
+gausCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=GaussianCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Gaussian Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+gausCurv
+```
+### Combine form plots
+```{r fig.height=5, fig.width=6}
+formPlot = plot_grid(meanCurv, gausCurv, minCurv, maxCurv, labels = "auto")
+
+formPlot
+```
+
+```{r}
+ggsave("../figures/FieldMoistureDEMForm.png", width = 6, height = 5, units = "in")
+
+```
+## Moisture classes vs Flow Attributes
+```{r}
+hCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=HorizontalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Horizontal Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+hCurv
+```
+
+```{r}
+vCurv = df %>%  
+  ggplot(., aes(x=moistureClass, y=VerticalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Vertical Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+vCurv
+```
+
+```{r}
+si = df %>%  
+  ggplot(., aes(x=moistureClass, y=ShapeIndex)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Shape Index") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+si
+```
+### Combine Flow plots
+```{r fig.height=5, fig.width=6}
+plot_grid(hCurv, vCurv, si, labels = "auto")
+```
+```{r}
+ggsave("../figures/FieldMoistureDEMFlow.png", width = 6, height = 5, units = "in")
+
+```
+
+## Eastness Northness
+```{r}
+east = df %>%  
+  ggplot(., aes(x=moistureClass, y=Eastness)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Eastness") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+east
+```
+
+```{r}
+north = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=Northness)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Northness") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+north
+```
+### Combine North and East 
+```{r fig.height=3, fig.width=6}
+plot_grid(east, north, labels = "auto")
+```
+```{r}
+ggsave("../figures/AKFieldMoistureEastNorth.png", width = 6, height = 3, units = "in")
+
+```
+## TPI vs Form Attributes
+
+```{r}
+tpi_plot = df_tpi %>%  
+  ggplot(., aes(x=moistureClass, y=TPI450)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("TPI") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+tpi_plot
+```
+
+# Other visualization
 ## Elevation
 ```{r}
 df %>% filter(elevation > 0) %>% 
