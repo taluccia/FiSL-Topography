@@ -130,6 +130,76 @@ write.csv(nwt_shield, "../outputs/nwt_shield.csv", row.names=FALSE)
 ```
 
 # Convert to point shapefile with WGS 84 
+
+## SK
+```{r}
+sk_field2 = sk_field %>% dplyr::select(project_id:longitude)
+```
+## Projection
+```{r}
+wgs_proj = "+proj=longlat +datum=WGS84 +no_defs"
+```
+
+```{r}
+coords_df = cbind(sk_field2$longitude, sk_field2$latitude)
+df_pt <- SpatialPointsDataFrame(coords_df, proj4string = CRS(wgs_proj), data = sk_field2)
+```
+
+# Transform from sp to sf
+
+```{r}
+df_pt_sf = st_as_sf(df_pt)
+```
+```{r}
+head(df_pt_sf)
+```
+
+```{r}
+plot(st_geometry(df_pt_sf))
+```
+
+## Write to shapefile
+
+```{r eval=FALSE, include=FALSE}
+st_write(df_pt_sf, "../outputs/SKPoints.shp", driver="ESRI Shapefile")
+```
+
+
+## NWT 
+```{r}
+nwt_field2 = nwt_field %>% dplyr::select(project_id:longitude)
+```
+## Projection
+```{r}
+wgs_proj = "+proj=longlat +datum=WGS84 +no_defs"
+```
+
+```{r}
+coords_df = cbind(nwt_field2$longitude, nwt_field2$latitude)
+df_pt <- SpatialPointsDataFrame(coords_df, proj4string = CRS(wgs_proj), data = nwt_field2)
+```
+
+# Transform from sp to sf
+
+```{r}
+df_pt_sf = st_as_sf(df_pt)
+```
+```{r}
+head(df_pt_sf)
+```
+
+```{r}
+plot(st_geometry(df_pt_sf))
+```
+
+## Write to shapefile
+
+```{r eval=FALSE, include=FALSE}
+st_write(df_pt_sf, "../outputs/NWTPoints.shp", driver="ESRI Shapefile")
+```
+
+
+## NWT Shield
 For NWT Shield points for testing topo variable calculations
 ```{r}
 head(nwt_shield) 
@@ -165,4 +235,67 @@ plot(st_geometry(df_pt_sf))
 
 ```{r eval=FALSE, include=FALSE}
 st_write(df_pt_sf, "../outputs/NWTshieldPoints.shp", driver="ESRI Shapefile")
+```
+
+
+## AK 
+For AK points for testing topo variable calculations and working on First Landscape
+```{r}
+head(ak_field) 
+```
+
+```{r}
+ak_field2 = ak_field %>% dplyr::select(project_id:longitude)
+```
+## Projection
+```{r}
+wgs_proj = "+proj=longlat +datum=WGS84 +no_defs"
+```
+
+```{r}
+coords_df_ak = cbind(ak_field2$longitude, ak_field2$latitude)
+df_pt_ak <- SpatialPointsDataFrame(coords_df_ak, proj4string = CRS(wgs_proj), data = ak_field2)
+```
+
+# Transform from sp to sf
+
+```{r}
+df_pt_sf_ak = st_as_sf(df_pt_ak)
+```
+```{r}
+df_pt_sf_ak
+```
+```{r}
+unique(df_pt_sf_ak$project_name)
+```
+
+```{r}
+df_pt_sf_ak %>% filter(project_name=="JFSP_Boby")
+```
+```{r}
+ak_only = df_pt_sf_ak %>% filter(!project_name=="CAN_deGroot")
+```
+
+```{r}
+plot(st_geometry(df_pt_sf_ak))
+```
+### Min/Max Lat/long
+```{r}
+min(df_pt_sf_ak$latitude)
+max(df_pt_sf_ak$latitude)
+```
+
+```{r}
+min(df_pt_sf_ak$longitude)
+max(df_pt_sf_ak$longitude)
+```
+
+## Write to shapefile
+
+```{r eval=FALSE, include=FALSE}
+st_write(df_pt_sf_ak, "../outputs/AKYukonPoints.shp", driver="ESRI Shapefile")
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(ak_only, "../outputs/AKPoints.shp", driver="ESRI Shapefile")
 ```
