@@ -73,7 +73,7 @@ m <- mosaic(rsrc)
 
 ## Plot DEM
 
-```{r eval=FALSE, include=FALSE}
+```{r}
 plot(m)
 ```
 
