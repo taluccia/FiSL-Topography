@@ -1,0 +1,414 @@
+---
+title: "AK TAGEE Visualize"
+author: "Anna Talucci"
+date: '2022-07-09'
+output: html_document
+---
+
+
+# Overview
+Data inspection of Tagee Terrain variables for Alaska
+# Packages
+
+```{r}
+library(tidyverse)
+library(cowplot)
+```
+
+# Data
+
+```{r}
+field = read.csv("../data/Field/ak_field.csv")
+termet = read.csv("../data/TageeTest/AkFabDemTerrain.csv")
+tpi = read.csv("../data/TPI/AkFabDemTPI.csv")
+```
+
+
+```{r}
+head(field)
+head(termet)
+head(tpi)
+```
+# Field Data Name moisture class
+```{r}
+field = field %>% 
+  mutate(moistureClass = ifelse(moisture==1, "xeric", 
+                                ifelse(moisture==2, "subxeric",
+                                       ifelse(moisture==3, "subxeric-mesic",
+                                              ifelse(moisture==4, "mesic", 
+                                                     ifelse(moisture==5, "submesic", 
+                                                            ifelse(moisture==6, "subhygric", "NA")))))))
+
+head(field)
+```
+```{r}
+field$moistureClass <- factor(field$moistureClass, levels=c("xeric", "subxeric", "subxeric-mesic", "mesic", "submesic", "subhygric"))
+```
+# Data organize
+```{r}
+terrain = termet %>% 
+  dplyr::select(prjct_d, latitud, longitd, Aspect:VerticalCurvature) %>%
+  dplyr::rename(project_id = prjct_d, latitude = latitud, longitude = longitd)
+
+terrain
+  
+```
+```{r}
+tpi1 = tpi %>% 
+  dplyr::select(prjct_d, latitud, longitd, ASPTR:TPI450, elevation) %>%
+  dplyr::rename(project_id = prjct_d, latitude = latitud, longitude = longitd)
+
+tpi1
+  
+```
+
+```{r}
+df = merge(terrain, field, by = c("project_id", "latitude", "longitude"))
+```
+
+```{r}
+df_tpi = merge(tpi1, field, by = c("project_id", "latitude", "longitude"))
+```
+
+```{r}
+head(df)
+```
+
+# Difference in elevation
+```{r}
+df %>% 
+  dplyr::select(project_id,  Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  mutate(FABField = elevation - Elevation) 
+
+```
+
+```{r}
+df %>% 
+  dplyr::select(project_id,  Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  mutate(FABField = elevation - Elevation) %>%
+   summarise(across(Elevation:FABField, list(min = min, max = max, mean = mean)))
+
+```
+
+### Remove outliers
+NWT.sf.239
+NWT.sf.63
+```{r}
+target = c("NWT.sf.239", "NWT.sf.63")
+df2 %>% 
+  dplyr::select(project_id, ArcElevation, Elevation, elevation) %>%
+  filter(elevation > 0) %>%
+  filter(!project_id %in% target) %>%
+  mutate(ArcField = elevation-ArcElevation) %>%
+  mutate(FABField = elevation - Elevation) %>%
+   summarise(across(ArcField:FABField, list(min = min, max = max, mean = mean)))
+
+```
+
+# Visualize data TAGEE
+df is Terrain from FABDEM and field data
+```{r}
+head(df)
+```
+
+
+## Moisture classes vs Form Attributes
+
+```{r}
+meanCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=MeanCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Mean Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+meanCurv
+```
+```{r}
+maxCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=MaximalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Max Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+maxCurv
+```
+
+```{r}
+minCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=MinimalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Min Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+minCurv
+```
+
+```{r}
+gausCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=GaussianCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Gaussian Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+gausCurv
+```
+### Combine form plots
+```{r fig.height=5, fig.width=6}
+formPlot = plot_grid(meanCurv, gausCurv, minCurv, maxCurv, labels = "auto")
+
+formPlot
+```
+
+```{r}
+ggsave("../figures/AKFieldMoistureDEMForm.png", width = 6, height = 5, units = "in")
+
+```
+## Moisture classes vs Flow Attributes
+```{r}
+hCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=HorizontalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Horizontal Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+hCurv
+```
+
+```{r}
+vCurv = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=VerticalCurvature)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Vertical Curvature") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+vCurv
+```
+
+```{r}
+si = df_class %>%  
+  ggplot(., aes(x=moistureClass, y=ShapeIndex)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Shape Index") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+si
+```
+### Combine Flow plots
+```{r fig.height=5, fig.width=6}
+plot_grid(hCurv, vCurv, si, labels = "auto")
+```
+```{r}
+ggsave("../figures/AKFieldMoistureDEMFlow.png", width = 6, height = 5, units = "in")
+
+```
+
+## Eastness Northness
+```{r}
+east = df %>%  
+  ggplot(., aes(x=moistureClass, y=Eastness)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Eastness") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+east
+```
+
+```{r}
+north = df %>%  
+  ggplot(., aes(x=moistureClass, y=Northness)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("Northness") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+north
+```
+### Combine North and East 
+```{r fig.height=3, fig.width=6}
+plot_grid(east, north, labels = "auto")
+```
+```{r}
+ggsave("../figures/AKFieldMoistureEastNorth.png", width = 6, height = 3, units = "in")
+
+```
+
+# Visualize data TPI
+df is Terrain from FABDEM and field data
+```{r}
+head(df_tpi)
+```
+
+
+## TPI vs Form Attributes
+
+```{r}
+tpi_plot= df_tpi %>%  
+  ggplot(., aes(x=moistureClass, y=TPI450)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("TPI") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+tpi_plot
+```
+
+## Beers Aspect vs Form Attributes
+
+```{r}
+ASPTR_plot= df_tpi %>%  
+  ggplot(., aes(x=moistureClass, y=ASPTR)) +
+  geom_boxplot() +
+  xlab("Field Moisture") +
+  ylab("ASPTR") +
+  scale_x_discrete(guide = guide_axis(n.dodge=2))
+
+ASPTR_plot
+```
+### Combine Flow plots
+```{r fig.height=3, fig.width=6}
+plot_grid(tpi_plot, ASPTR_plot, labels = "auto")
+```
+```{r}
+ggsave("../figures/AKFieldMoistureTPI.png", width = 6, height = 3, units = "in")
+
+```
+
+# Other Visualizations
+## Elevation
+```{r}
+df %>% filter(elevation > 0) %>% 
+  ggplot(., aes(x=elevation, y=Elevation)) +
+  geom_point() +
+  xlab("Field Elevation") +
+  ylab("DEM Elevation")
+```
+
+
+```{r}
+df1 %>% filter(elevation > 0) %>% 
+  ggplot(., aes(x=elevation, y=Elevation)) +
+  geom_point() +
+  xlab("Field Elevation") +
+  ylab("DEM Elevation")
+```
+
+```{r}
+df2 %>% filter(Elevation > 0) %>% 
+  ggplot(., aes(x=ArcElevation, y=Elevation)) +
+  geom_point() 
+```
+
+## Slope
+```{r}
+df %>% filter(slope > 0) %>% 
+  ggplot(., aes(x=slope, y=Slope)) +
+  geom_point() +
+  xlab("Field slope") +
+  ylab("DEM Slope")
+```
+
+```{r}
+df1 %>% filter(slope > 0) %>% 
+  ggplot(., aes(x=slope, y=Slope)) +
+  geom_point() +
+  xlab("Field slope") +
+  ylab("DEM Slope")
+```
+## Aspect
+
+```{r}
+df %>% filter(aspect > 0) %>% 
+  ggplot(., aes(x=aspect, y=Aspect)) +
+  geom_point() +
+  xlab("Field aspect") +
+  ylab("DEM Aspect")
+```
+
+## Prop SOL combusted vs. Vertical curvature
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=VerticalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Slope)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=ShapeIndex)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Northness)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MinimalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MeanCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=MaximalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=HorizontalCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Hillshade)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=GaussianCurvature)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Elevation)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Eastness)) +
+  geom_point() 
+```
+
+```{r}
+df %>% filter(prop_sol_combusted > 0) %>% 
+  ggplot(., aes(x=prop_sol_combusted, y=Aspect)) +
+  geom_point() 
+```

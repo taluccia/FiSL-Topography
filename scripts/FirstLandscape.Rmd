@@ -1,0 +1,52 @@
+---
+title: "FirstLandscape"
+author: "Anna Talucci"
+date: '2022-07-08'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+
+
+# Packages 
+
+```{r}
+library(sp) 
+library(raster)
+library(rgdal)
+library(sf)
+
+```
+## Projection
+```{r}
+wgs_proj = "+proj=longlat +datum=WGS84 +no_defs"
+```
+
+# Data
+```{r}
+l1 = st_read("../data/FirstLandscape/caribou_pker_ck.shp", "caribou_pker_ck")
+```
+
+
+```{r}
+l1
+```
+65.25555168123292, -147.4791419556817
+```{r}
+
+plot(st_geometry(l1))
+```
+
+# switch to WGS
+
+```{r}
+l1_wgs = st_transform(l1, "+proj=longlat +datum=WGS84 +no_defs")
+```
+
+```{r}
+l1_wgs
+```
