@@ -13,6 +13,7 @@ Use
 [DEM](https://data.bris.ac.uk/data/dataset/25wfy0f9ukoge2gs7a5mqpq2j7)
 DEM is bare earth removal of trees at 30 m resolution. Chosen over Arctic DEM
 [Topography Metrics](https://www.sciencebase.gov/catalog/item/53db9ca0e4b0fba533faf4be)
+[Field Data](https://daac.ornl.gov/ABOVE/guides/ABoVE_Plot_Data_Burned_Sites.html)
 
 
 Topography Metrics (adapting code Sandra Haire)
@@ -48,7 +49,7 @@ Datum: North_American_1983
 [Data avaialbe on ORNL DAAC](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=1744)
 Coordinate system WGS8 84
 
-Varaibles of interest from AK_CA_Burned_Plot_Data_1983_2016.csv
+Variables of interest from AK_CA_Burned_Plot_Data_1983_2016.csv
 
 * Elevation
 * accuracy_vertical
@@ -57,3 +58,17 @@ Varaibles of interest from AK_CA_Burned_Plot_Data_1983_2016.csv
 * moisture
 * ag_biomass_combusted
 * Burn_depth
+
+# Getting SAGA to work with R and QGIS on a Mac OS Monterey 12.4 (07-12-22)
+**RESOURCES**
+[RSAGA pAckage PDF](https://cran.r-project.org/web/packages/RSAGA/RSAGA.pdf)
+[SAGA Command line](https://dges.carleton.ca/CUOSGwiki/index.php/Automating_SAGA_Workflows_Using_Command_Line_Scripting#:~:text=SAGA%20GIS%20provides%20access%20to,using%20Task%20Scheduler%20or%20cron.)
+[2020 dated link in last comment for setting up SAGA on Mac and accessing SAGA GUI](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Mac%20OS%20X/)
+For RSAGA
+Install homebrew
+[Install gdal with homebrew]9https://formulae.brew.sh/formula/gdal) in the terminal type `brew install gdal`
+
+
+For QGIS
+Install Homebrew
+In terminal with homebrew `brew install saga-gis`
