@@ -18,19 +18,26 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(RSAGA)
 ```
-#$ Define
 
 ```{r}
+env <- rsaga.env()
+```
+
+# Delete
+
+code for mac...did not work
+```{r eval=FALSE, include=FALSE}
 rsaga.path <-"/Library/Frameworks/R.framework/Versions/4.2/Resources/library/RSAGA"
 
 ```
 
-```{r}
+code for mac...did not work
+```{r eval=FALSE, include=FALSE}
 rsaga.path <-"/Users/annatalucci/saga-6.2.0/src/saga_core/saga_cmd"
 ```
 
-
-```{r}
+code for mac...did not work
+```{r eval=FALSE, include=FALSE}
 saga_cmd = "/Users/annatalucci/develop/saga-code/saga-gis/src/saga_core/saga_cmd/saga_cmd"
 saga_modules = "/Users/annatalucci/develop/saga-code/saga-gis/cmake/modules"
 ```
@@ -42,24 +49,27 @@ rsaga.env(workspace = ".", cmd = ifelse(Sys.info()["sysname"] == "Windows",
   parallel = FALSE, check.libpath = TRUE, check.SAGA = TRUE,
   check.PATH = Sys.info()["sysname"] == "Windows", check.os.default = TRUE,
   os.default.path = rsaga.default.path(), lib.prefix)
-  
-```{r}
+
+code for mac...did not work  
+```{r eval=FALSE, include=FALSE}
 rsaga.env(workspace = ".", cmd = saga_cmd, path="/Users/annatalucci/develop/saga-code/saga-gis/src/saga_core/saga_cmd/saga_cmd", modules=saga_modules)
 ```
-```{r}
+
+code for mac...did not work
+```{r eval=FALSE, include=FALSE}
 rsaga.env(workspace = ".", cmd = "/usr/local/bin", path="/Users/annatalucci/develop/saga-code/saga-gis/", modules="/lib/saga")
 ```
 # Set up RSAGA environment
 Not rightt (Delete)
-```{r}
+```{r eval=FALSE, include=FALSE}
 myenv <- rsaga.env()
 myenv
 ```
  env <- rsaga.env(path="C:/Program Files (x86)/SAGA-GIS-2-1-0")
-```{r}
+```{reval=FALSE, include=FALSE}
 env <- rsaga.env(path=rsaga.path) 
 ```
-```{r}
+```{reval=FALSE, include=FALSE}
 if (FALSE) {
 
 # call if you do not have any idea if and where SAGA GIS is installed
@@ -77,10 +87,12 @@ RSAGA::rsaga.env(path = saga$installed$binDir[1],modules = saga$installed$module
 }
 ```
 
-```{r}
+
+```{reval=FALSE, include=FALSE}
 rsaga.env(modules = saga$sagaModPath)
 ```
 
+# Test
 ```{r}
 rsaga.geoprocessor(lib = "ta_morphometry", module = "Slope, Aspect, Curvature",
                    param = list(ELEVATION = paste(getwd(),"/dem.sgrd", sep = ""), 
