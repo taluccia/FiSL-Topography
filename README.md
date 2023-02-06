@@ -66,8 +66,10 @@ Variables of interest from AK_CA_Burned_Plot_Data_1983_2016.csv
 [2020 dated link in last comment for setting up SAGA on Mac and accessing SAGA GUI](https://sourceforge.net/p/saga-gis/wiki/Compiling%20SAGA%20on%20Mac%20OS%20X/)
 For RSAGA
 Install homebrew
-[Install gdal with homebrew]9https://formulae.brew.sh/formula/gdal) in the terminal type `brew install gdal`
+[Install gdal with homebrew](9https://formulae.brew.sh/formula/gdal) in the terminal type `brew install gdal`
 
+
+ [SAGA Download](https://sourceforge.net/projects/saga-gis/)
 
 For QGIS
 Install Homebrew
