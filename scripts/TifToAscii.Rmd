@@ -1,0 +1,43 @@
+---
+title: "Geo tiff to ASCii"
+author: "Anna Talucci"
+date: "2023-02-06"
+output: html_document
+---
+
+```{r}
+library(raster)
+library(rgdal)
+```
+
+# DEM Data
+```{r}
+x <- raster("../data/DEMFieldAK/N62W142_FABDEM_V1-0.tif")
+```
+
+```{r}
+x
+```
+
+# Save DEM as SAGA grd
+```{r}
+writeRaster(x, file = "../outputs/dem1.asc", format="ascii")
+```
+
+
+
+```{r}
+dem <- raster("../outputs/dem.asc")
+```
+
+```{r}
+dem
+```
+```{r}
+dem1 <- raster("../outputs/dem1.asc")
+```
+```{r}
+dem1
+```
+
+
