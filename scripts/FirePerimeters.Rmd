@@ -1,0 +1,158 @@
+---
+title: "Fire Perimeters"
+author: "Anna Talucci"
+date: "2023-02-09"
+output: html_document
+---
+
+# Overview
+Select fires for testing topographic features from DEM. 
+
+Fires for 2015 from SK complex (identified in QGIS)
+NFIREID--2927, 2933, 838
+
+Fire for 2014 from NWT complex 
+NFIREID--226, 151, 132, 65, 63, 86, 2284, 139, 274
+
+# Packages 
+
+```{r}
+library(terra)
+library(rgdal)
+library(sf)
+library(tidyverse)
+library(mapview)
+```
+
+
+# Data
+
+#  2014
+```{r}
+fires14 = st_read("../data/FirePerimeters/nbac_2014_r9_20210810/nbac_2014_r9_20210810.shp", "nbac_2014_r9_20210810")
+```
+
+##  2015
+```{r}
+fires15 = st_read("../data/FirePerimeters/nbac_2015_r9_20210810/nbac_2015_r9_20210810.shp", "nbac_2015_r9_20210810")
+```
+```{r}
+skpt15 = st_read("../outputs/FieldPoints/SKPoints/Sk2015.shp", "Sk2015")
+```
+
+# Check data
+
+## Fires
+```{r}
+head(fires14)
+```
+
+```{r}
+head(fires15)
+```
+```{r}
+head(skpt15)
+```
+
+```{r}
+unique(fires15$AGENCY)
+```
+```{r}
+str(fires15)
+```
+
+# Filter fires 
+
+## for SK
+```{r}
+sk_fires = fires15 %>% filter(NFIREID %in% c(2927, 2933, 838))
+```
+
+```{r}
+plot(st_geometry(sk_fires))
+```
+
+```{r eval=FALSE, include=FALSE}
+sf::st_write(sk_fires, "../outputs/SelectFires/SK2015.shp", driver="ESRI Shapefile")
+```
+
+## for NWT
+```{r}
+nwt_fires = fires14 %>% filter(NFIREID %in% c(226, 151, 132, 65, 63, 86, 2284, 139, 274))
+```
+
+```{r}
+nwt_fires
+```
+
+```{r}
+plot(st_geometry(nwt_fires))
+```
+
+```{r eval=FALSE, include=FALSE}
+sf::st_write(nwt_fires, "../outputs/SelectFires/NWT2014.shp", driver="ESRI Shapefile")
+```
+
+# Transform crs for field points
+```{r}
+skpt15
+```
+
+
+```{r}
+skpts <- st_transform(skpt15, crs(sk_fires))
+```
+
+```{r}
+skpts
+```
+
+```{r}
+st_crs(skpts)
+st_crs(sk_fires)
+```
+
+```{r}
+plot(st_geometry(sk_fires))
+plot(st_geometry(skpts), add=TRUE)
+```
+
+# Select only burned sites
+```{r}
+unique(skpts$fire_id)
+```
+
+```{r}
+skpts1 = skpts %>% filter(fire_id %in% c("Egg", "Philion", "Lynx", "Brady"))
+```
+
+```{r}
+st_crs(skpts1)
+```
+
+```{r}
+plot
+```
+
+
+
+```{r}
+sk_fires %>% 
+  #create ID's for the states (if they don't have one already) 
+  #state ID should be equal to rownumber (fot the filter later on)
+  mutate( id = row_number() ) %>%
+  #filter out states that do not have any intersetcions with the points/cities
+  filter( id %in% unlist( st_intersects(skpts1, sk_fires) ) ) %>%
+  #plot
+  mapview::mapview()   
+```
+
+
+```{r}
+plot(st_geometry(out))
+```
+
+```{r}
+plot(st_geometry(skpts1), add=TRUE)
+```
+

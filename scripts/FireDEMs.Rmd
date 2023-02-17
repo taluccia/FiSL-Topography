@@ -1,0 +1,98 @@
+---
+title: "Fires DEM"
+author: "Anna Talucci"
+date: "2023-02-10"
+output: html_document
+---
+
+# Overview
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+```
+
+
+# Data
+
+## DEMs
+```{r}
+skDEM<-rast("../data/FieldDEM/DEMFieldSK.tif")
+nwtDEM<-rast("../data/FieldDEM//DEMFieldNWT.tif")
+```
+
+## Fires
+```{r}
+skfp = st_read("../data/SelectFires/SK2015.shp", "SK2015")
+
+nwtfp = st_read("../data/SelectFires/NWT2014.shp", "NWT2014")
+
+```
+# Explore
+```{r}
+skDEM
+```
+
+# Project
+```{r}
+crs(skfp, proj=TRUE)
+```
+```{r}
+skwgs <- st_transform(skfp, crs=4326)
+```
+
+```{r}
+nwtwgs <- st_transform(nwtfp, crs=4326)
+```
+
+```{r}
+nwtwgs
+```
+
+# Plot
+```{r}
+plot(skDEM)
+plot(st_geometry(skwgs), add=TRUE)
+```
+
+```{r}
+plot(nwtDEM)
+plot(st_geometry(nwtwgs), add=TRUE)
+```
+
+# Crop 
+
+```{r}
+clip_sk = crop(skDEM, skwgs)
+```
+
+```{r}
+clip_nwt = crop(nwtDEM, nwtwgs)
+```
+
+# Plot
+
+```{r}
+plot(clip_sk)
+plot(st_geometry(skwgs), add=TRUE)
+```
+
+```{r}
+plot(clip_nwt)
+plot(st_geometry(nwtwgs), add=TRUE)
+```
+
+# Save DEM as tiff
+```{r eval=FALSE, include=FALSE}
+writeRaster(clip_sk, filename="../outputs/FireDEM/DEMSK2015.tif")
+```
+
+# Save DEM as ascii
+```{r eval=FALSE, include=FALSE}
+writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.tif")
+```
+
+
