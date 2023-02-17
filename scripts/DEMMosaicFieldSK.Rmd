@@ -83,5 +83,5 @@ plot(m)
 ```
 
 ```{r eval=FALSE, include=FALSE}
-writeRaster(m, filename="../outputs/DEMFieldSK.tif")
+writeRaster(m, filename="../outputs/FieldDEM/DEMFieldSK.tif")
 ```
