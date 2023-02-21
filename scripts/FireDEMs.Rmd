@@ -52,16 +52,7 @@ nwtwgs <- st_transform(nwtfp, crs=4326)
 nwtwgs
 ```
 
-# Plot
-```{r}
-plot(skDEM)
-plot(st_geometry(skwgs), add=TRUE)
-```
 
-```{r}
-plot(nwtDEM)
-plot(st_geometry(nwtwgs), add=TRUE)
-```
 
 # Crop 
 
@@ -87,12 +78,20 @@ plot(st_geometry(nwtwgs), add=TRUE)
 
 # Save DEM as tiff
 ```{r eval=FALSE, include=FALSE}
-writeRaster(clip_sk, filename="../outputs/FireDEM/DEMSK2015.tif")
-```
-
-# Save DEM as ascii
-```{r eval=FALSE, include=FALSE}
+writeRaster(clip_sk, filename="../outputs/FireDEM/DEMClippedSK2015.tif")
 writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.tif")
 ```
 
+# Save DEM as ascii
+```{r}
+str(clip_sk)
+```
+## Save as ASCii
 
+
+datatype = "INT2U"
+writeRaster(r, f, overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES"), datatype='INT1U')
+```{r eval=FALSE, include=FALSE}
+writeRaster(clip_sk, filename="../outputs/FireDEM/DEMClippedSK2015.asc", datatype = "INT2U", filetype = "AAIGrid")
+writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.asc", datatype = "INT2U", filetype = "AAIGrid")
+```
