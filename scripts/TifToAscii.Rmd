@@ -4,40 +4,39 @@ author: "Anna Talucci"
 date: "2023-02-06"
 output: html_document
 ---
+# Overview
+How to save as ASCii grid for SAGA topographic processing. This is updated to use the new `terra` package, which relies on `gdalUtilities` and `sf` package.
+
+# Packages 
 
 ```{r}
-library(raster)
-library(rgdal)
+library(terra)
+library(gdalUtilities)
+library(sf)
 ```
 
 # DEM Data
 ```{r}
-x <- raster("../data/DEMFieldAK/N62W142_FABDEM_V1-0.tif")
+x <- rast("../data/DEMFieldAK/N62W142_FABDEM_V1-0.tif")
 ```
 
 ```{r}
 x
 ```
 
-# Save DEM as SAGA grd
+# Save DEM as ASCii file
 ```{r}
-writeRaster(x, file = "../outputs/dem1.asc", format="ascii")
+writeRaster(x, filename = "../outputs/dem1.asc", datatype = "INT2U", filetype = "AAIGrid", overwrite=TRUE)
 ```
 
-
-
+# Read it back in and take a look
 ```{r}
-dem <- raster("../outputs/dem.asc")
+dem <- rast("../outputs/dem1.asc")
 ```
 
 ```{r}
 dem
 ```
-```{r}
-dem1 <- raster("../outputs/dem1.asc")
-```
-```{r}
-dem1
-```
+
 
 
