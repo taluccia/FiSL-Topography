@@ -1,0 +1,133 @@
+---
+title: "batch.run.1.R"
+author: "Anna Talucci"
+date: "2023-02-22"
+output: html_document
+---
+#**Moved over to separate repository
+
+# batch.run1.R
+# Change Log
+#    September 2014 
+#       Added user flag to allow switching between Sandy's settings and Ethan's
+#       Added "swi.grd" and "swi.gri" to list of metrics.
+
+## process the first set of dems for Canada
+# This script manages calculation of multiple terrain metrics on 
+# many grids.
+# I've put three comment character (###) on lines that might need to be changed.
+#  Additionally the file "grids.csv"  should be updated to include the names
+#  of all your grids.  Only the "grid" column in that file is used by R.
+## made a text file of just the dem base name instead. SH
+
+```{r}
+rm(list=ls()) ### (you may not want this line) clear workspace   CAUTION!!!
+```
+
+# Setup
+
+```{r}
+user <- "anna"  # or sandy  this controls machine specific configuration
+stopifnot(user %in% c("anna", "sandy"))
+```
+
+```{r}
+if(user == "anna"){
+  input.dir <- "../data/dems/"   ###  Where your grids are
+  output.dir <- "../outputs/" ###  Where the results should be put
+  rsaga.path <- "C:/Program Files (x86)/SAGA-GIS-2-1-0"
+}
+```
+
+```{r}
+if(user == "sandy"){
+  setwd("c:/rfiles/fires/terrain/launch/")   ### Change to wherever you put the code files sourced below
+  # Setup Paths
+  workspace <- "c:/data/fires/canada/terrain/temp1/"   ### If running multiple processes make sure that each uses it's own workspace
+  # Also, I'm not currently cleaning this out.  You will want to delete it once in a while.
+  input.dir <- "c:/data/fires/canada/demsall/"   ###  Where your grids are
+  output.dir <- "c:/data/fires/canada/terrain/out1/" ###  Where the results should be put
+  rsaga.path <- "C:/Program Files (x86)/SAGA-GIS"  ### MUST GET THIS RIGHT! You will know...
+  
+}
+```
+
+```{r}
+source("terrain.function.calls.R")
+source("run.metric.R")
+```
+
+```{r}
+startover <- FALSE  #  If FALSE then grids which have all of the expected metrics will be skipped.
+                    # If TRUE then everything will be run regardless of pre-existing output.
+```
+
+# Read in calls file (Should not be changed at all)
+```{r}
+calls <- read.csv("../data/callsGirds/calls.csv", stringsAsFactors=FALSE)
+```
+
+# Read in grids file (you'll need to update this to include all the grids you want to run)
+```{r}
+grids <- as.vector(scan("demlist1.txt", what="character"))
+```
+
+
+# This is a list of all the metrics expected from the current call file.
+```{r}
+all.metrics <- c("hydro_carea.grd", "hydro_carea.gri", "hydro_caspect.grd", 
+                 "hydro_caspect.gri", "hydro_cflowpath.grd", "hydro_cflowpath.gri", 
+                 "hydro_cheight.grd", "hydro_cheight.gri", "hydro_cslope.grd", 
+                 "hydro_cslope.gri", "morpho_aspect.grd", "morpho_aspect.gri", 
+                 "morpho_curv.grd", "morpho_curv.gri", "morpho_hcurv.grd", "morpho_hcurv.gri", 
+                 "morpho_slope.grd", "morpho_slope.gri", "morpho_vcurv.grd", "morpho_vcurv.gri", 
+                 "relpos.grd", "relpos.gri", "tci.grd", "tci.gri", "ws0.grd", 
+                 "ws0.gri", "ws135.grd", "ws135.gri", "ws180.grd", "ws180.gri", 
+                 "ws225.grd", "ws225.gri", "ws270.grd", "ws270.gri", "ws315.grd", 
+                 "ws315.gri", "ws45.grd", "ws45.gri", "ws90.grd", "ws90.gri", "swi.grd", "swi.gri")
+```
+
+
+## This code was used to create the list above after running a single grid ("blake30")
+# l <- list.files(output.dir, pattern="blake30", ignore.case = TRUE)
+# all.metrics <- gsub("blake30_", "", l, fixed=FALSE, ignore.case = TRUE )
+# dput(all.metrics)
+
+# Set up RSAGA environment
+```{r}
+library(RSAGA)
+```
+
+```{r}
+env <- rsaga.env(path=rsaga.path) 
+```
+
+# Loop through grids 
+```{r}
+for(i in 1:length(grids)){
+  grid <- grids[i]  
+  # grid <- "blake30"  # for testing
+  cat("\n\nStarting grid", i, "of", length(grids), "\t", grid, "\n\n")
+```  
+  ## skip completed grids if appropriate
+```{r}  
+  if(!startover){ 
+    result.files <- paste(output.dir, grid, "_", all.metrics, sep="")
+    if(all(file.exists(result.files))) next
+  }
+```  
+  # Run all the metrics for the grid
+```{r}  
+for(run in calls$run){
+    run.metric(grid=grid, 
+               run=run, 
+               calls=calls, 
+               input.dir=input.dir, 
+               output.dir=output.dir,
+               workspace=workspace, 
+               env=env) 
+  }
+}
+```
+
+**THE END**
