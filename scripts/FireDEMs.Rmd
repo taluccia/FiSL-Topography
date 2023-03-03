@@ -31,6 +31,12 @@ skfp = st_read("../data/SelectFires/SK2015.shp", "SK2015")
 nwtfp = st_read("../data/SelectFires/NWT2014.shp", "NWT2014")
 
 ```
+
+# Field points
+```{r}
+nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
+
+```
 # Explore
 ```{r}
 skDEM
@@ -38,7 +44,8 @@ skDEM
 
 # Project
 ```{r}
-crs(skfp, proj=TRUE)
+fire_projection = crs(skfp, proj=TRUE)
+fire_projection
 ```
 ```{r}
 skwgs <- st_transform(skfp, crs=4326)
@@ -52,6 +59,25 @@ nwtwgs <- st_transform(nwtfp, crs=4326)
 nwtwgs
 ```
 
+# Select 1 NWT fire
+```{r}
+str(nwtwgs)
+```
+
+```{r}
+nwt1 = nwtwgs %>% dplyr::filter(NFIREID==c(2284))
+```
+
+## Reproject fire
+```{r}
+nwt1_ea = st_transform(nwt1, st_crs("+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"))
+```
+
+
+## Save Single fire
+```{r eval=FALSE, include=FALSE}
+st_write(nwt1_ea, "../outputs/SelectFires/NWT1_ea.shp", driver="ESRI Shapefile")
+```
 
 
 # Crop 
@@ -64,23 +90,88 @@ clip_sk = crop(skDEM, skwgs)
 clip_nwt = crop(nwtDEM, nwtwgs)
 ```
 
+```{r}
+clip_nwt1 = crop(nwtDEM, nwt1)
+```
+
 # Plot
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 plot(clip_sk)
 plot(st_geometry(skwgs), add=TRUE)
 ```
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 plot(clip_nwt)
 plot(st_geometry(nwtwgs), add=TRUE)
 ```
 
+```{r eval=FALSE, include=FALSE}
+plot(clip_nwt)
+plot(st_geometry(nwtpts), add=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+plot(clip_nwt)
+plot(st_geometry(nwt1), add=TRUE)
+```
+
+# Raster info
+```{r}
+clip_sk
+```
+
+```{r}
+clip_nwt
+```
+# Convert to equal area projection
+```{r}
+nwt_fireproj = project(clip_nwt, "+proj=lcc +lat_0=49 +lon_0=-95 +lat_1=49 +lat_2=77 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs")
+```
+
+```{r}
+nwt_fireproj
+```
+
+```{r}
+nwt_ea = project(clip_nwt, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+```{r}
+nwt_ea
+```
+
+```{r}
+nwt_ea1 = project(clip_nwt1, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+```{r}
+nwt_ea1
+```
+
+```{r}
+sk_ea = project(clip_sk, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+```{r}
+sk_ea
+```
+
 # Save DEM as tiff
 ```{r eval=FALSE, include=FALSE}
-writeRaster(clip_sk, filename="../outputs/FireDEM/DEMClippedSK2015.tif")
-writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.tif")
+writeRaster(clip_sk, filename="../outputs/FireDEM/DEMClippedSK2015.tif", overwrite=TRUE)
+writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.tif", overwrite=TRUE)
 ```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(sk_ea, filename="../outputs/FireDEM/DEMEASK2015.tif", overwrite=TRUE)
+writeRaster(nwt_ea, filename="../outputs/FireDEM/DEMEANWT2014.tif", overwrite=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(nwt_ea1, filename="../outputs/FireDEM/DEMEA1NWT2014.tif", overwrite=TRUE)
+```
+
 
 # Save DEM as ascii
 ```{r}
@@ -94,4 +185,13 @@ writeRaster(r, f, overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES"), datatype='
 ```{r eval=FALSE, include=FALSE}
 writeRaster(clip_sk, filename="../outputs/FireDEM/DEMClippedSK2015.asc", datatype = "INT2U", filetype = "AAIGrid")
 writeRaster(clip_nwt, filename="../outputs/FireDEM/DEMClippedNWT2014.asc", datatype = "INT2U", filetype = "AAIGrid")
+```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(sk_ea, filename="../outputs/FireDEM/DEMEASK2015.asc", datatype = "INT2U", filetype = "AAIGrid", overwrite=TRUE)
+writeRaster(nwt_ea, filename="../outputs/FireDEM/DEMEANWT2014.asc", datatype = "INT2U", filetype = "AAIGrid", overwrite=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(nwt_ea1, filename="../outputs/FireDEM/DEMEA1NWT2014.asc", filetype = "AAIGrid", overwrite=TRUE)
 ```
