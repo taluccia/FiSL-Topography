@@ -1,0 +1,365 @@
+---
+title: "MapTerrainMetricsSaga"
+author: "Anna Talucci"
+date: "2023-03-03"
+output: html_document
+---
+
+
+# Overview
+
+Maps
+
+# Resources 
+[tidyterra](https://dieghernan.github.io/tidyterra/)
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+library(rasterVis)
+library(tidyverse)
+library(tidyterra)
+```
+
+
+# Data
+
+## DEMs
+```{r}
+
+rastlist <- list.files(path = "../data/SagaOutputs", pattern='.tif$', all.files= T, full.names= T)
+```
+
+```{r}
+stk1 <- terra::rast(rastlist)
+```
+
+```{r}
+stk1
+```
+
+```{r}
+names(stk1)
+```
+
+## To single band raster
+
+### SWI
+
+```{r}
+swi1 <- terra::rast(rastlist, lyrs="SWIC1")
+```
+
+```{r}
+swi2 <- terra::rast(rastlist, lyrs="SWIL1")
+```
+
+### Hydro
+
+```{r}
+hydro1 <- terra::rast(rastlist, lyrs="carea")
+```
+
+```{r}
+hydro2 <- terra::rast(rastlist, lyrs= "flowpath")
+```
+
+### Basic
+
+```{r}
+basic1 <- terra::rast(rastlist, lyrs="slope")
+```
+
+```{r}
+basic2 <- terra::rast(rastlist, lyrs="aspect")
+```
+
+### Curvature
+
+```{r}
+cmaxi <- terra::rast(rastlist, lyrs="cmaxi")
+```
+
+```{r}
+cmini <- terra::rast(rastlist, lyrs= "cmini")
+```
+
+```{r}
+cplan <- terra::rast(rastlist, lyrs= "cplan")
+```
+
+```{r}
+cprof <- terra::rast(rastlist, lyrs= "cprof")
+```
+
+
+```{r}
+cgene <- terra::rast(rastlist, lyrs="cgene")
+```
+
+```{r}
+clong <- terra::rast(rastlist, lyrs= "clong")
+```
+
+```{r}
+croto <- terra::rast(rastlist, lyrs= "croto")
+```
+
+```{r}
+ctang <- terra::rast(rastlist, lyrs="ctang")
+```
+
+```{r}
+ctota <- terra::rast(rastlist, lyrs="ctota")
+```
+
+```{r}
+ccros <- terra::rast(rastlist, lyrs= "ccros")
+```
+## Fire
+```{r}
+nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
+fire = st_read("../data//SelectFires/NWT1_ea.shp", "NWT1_ea")
+```
+
+# Plot
+```{r}
+plot(stk1$aspect)
+plot(st_geometry(nwt_ea), add=TRUE)
+```
+
+# Value ranges
+```{r}
+min(stk1$aspect)
+max(stk1$aspect)
+```
+
+
+
+# Graphs
++
+  geom_sf(data = fire, fill = NA, colour="gray", alpha=0.1)
+
+## SWI
+
+```{r}
+( plot_swic = ggplot() +
+  geom_spatraster(data = swi1) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "SWI catchment",
+    subtitle = "SAGA Wetness Index")
+)
+```
+
+```{r}
+( plot_swil = ggplot() +
+  geom_spatraster(data = swi2) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "SWI local",
+    subtitle = "SAGA Wetness Index")
+)
+```
+
+## hydro
+
+```{r}
+( plot_caera = ggplot() +
+  geom_spatraster(data = hydro1) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Catchment",
+    subtitle = "Catchment Area") +
+  geom_sf(data = fire, fill = "white", colour=NA, alpha=0.5)
+)
+```
+
+```{r}
+( plot_flowpath = ggplot() +
+  geom_spatraster(data = hydro2) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Flowpath",
+    subtitle = "Flowpath")
+)
+```
+
+## Basic
+```{r}
+( plot_slope = ggplot() +
+  geom_spatraster(data = basic1) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Slope ()",
+    subtitle = "Slope")
+)
+```
+
+```{r}
+( plot_aspect = ggplot() +
+  geom_spatraster(data = basic2) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Aspect",
+    subtitle = "Aspect in degrees")
+)
+```
+
+## Curvature
+
+### cmaxi
+```{r}
+( plot_cmaxi = ggplot() +
+  geom_spatraster(data = cmaxi) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Curvature",
+    subtitle = "Maximum Curvature (cmaxi)")
+)
+```
+
+### cmini
+```{r}
+( plot_cmini = ggplot() +
+  geom_spatraster(data = cmini) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Minimum Curvature (cmini)")
+)
+```
+
+### cprof
+```{r}
+( plot_cprof = ggplot() +
+  geom_spatraster(data = cprof) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Profile Curvature (cprof)")
+)
+```
+
+### cplan
+```{r}
+( plot_cplan = ggplot() +
+  geom_spatraster(data = cplan) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Plan Curvature (cplan)")
+)
+```
+
+### cgene
+```{r}
+( plot_cgene = ggplot() +
+  geom_spatraster(data = cgene) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "General Curvature (cgene)")
+)
+```
+
+### clong
+```{r}
+( plot_clong = ggplot() +
+  geom_spatraster(data = clong) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Longitudinal Curvature (clong)")
+)
+```
+
+### ctota
+```{r}
+( plot_ctota = ggplot() +
+  geom_spatraster(data = ctota) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Total Curvature (ctota)")
+)
+```
+
+### croto
+
+```{r}
+( plot_croto = ggplot() +
+  geom_spatraster(data = croto) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Flowline Curvature (croto)")
+)
+```
+
+### ctang
+```{r}
+( plot_ctang = ggplot() +
+  geom_spatraster(data = ctang) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Tangential Curvature (ctang)")
+)
+```
+
+### ccros
+
+```{r}
+( plot_ccros = ggplot() +
+  geom_spatraster(data = ccros) +
+  scale_fill_whitebox_c(palette = "muted")  +
+  labs(
+    fill = "Curvature",
+    subtitle = "Cross section Curvature (ccros)")
+)
+```
+
+# Save 
+```{r}
+ggsave("../figures/MapsSaga/swic.jpeg", plot = plot_swic,  dpi = 300)
+ggsave("../figures/MapsSaga/swil.jpeg", plot = plot_swil,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/aspect.jpeg", plot = plot_aspect,  dpi = 300)
+ggsave("../figures/MapsSaga/slope.jpeg", plot = plot_slope,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/caera.jpeg", plot = plot_caera,  dpi = 300)
+ggsave("../figures/MapsSaga/flowpath.jpeg", plot = plot_flowpath,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/cmaxi.jpeg", plot = plot_cmaxi,  dpi = 300)
+ggsave("../figures/MapsSaga/cmini.jpeg", plot = plot_cmini,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/cprof.jpeg", plot = plot_cprof,  dpi = 300)
+ggsave("../figures/MapsSaga/cplan.jpeg", plot = plot_cplan,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/cgene.jpeg", plot = plot_cgene,  dpi = 300)
+ggsave("../figures/MapsSaga/clong.jpeg", plot = plot_clong,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/ctota.jpeg", plot = plot_ctota,  dpi = 300)
+ggsave("../figures/MapsSaga/croto.jpeg", plot = plot_croto,  dpi = 300)
+```
+
+```{r}
+ggsave("../figures/MapsSaga/ctang.jpeg", plot = plot_ctang,  dpi = 300)
+ggsave("../figures/MapsSaga/ccros.jpeg", plot = plot_croto,  dpi = 300)
+```

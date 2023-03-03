@@ -1,0 +1,152 @@
+---
+title: "Terrain Analysis with Terra"
+author: "Anna Talucci"
+date: "2023-03-03"
+output: html_document
+---
+
+
+# Overview
+
+Terrain analysis with `Terra` package R
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+```
+
+# Data
+
+## DEMs
+
+```{r}
+dem1<-rast("../data/FireDEM/DEMEA1NWT2014.tif")
+```
+
+# Terrain with Terra
+
+## Slope
+terrain(x, v="slope", neighbors=8, unit="degrees", filename="", ...)
+```{r}
+slope <- terrain(dem1, v="slope", neighbors=8, unit="radians", filename= "../outputs/TerraTerrain/slope.tif")
+```
+
+```{r}
+aspect <- terrain(dem1, v="aspect", neighbors=8, unit="degrees", filename= "../outputs/TerraTerrain/aspect.tif")
+```
+
+```{r}
+TPI <- terrain(dem1, v="TPI", neighbors=8, filename= "../outputs/TerraTerrain/TPI.tif")
+```
+
+```{r}
+TRI <- terrain(dem1, v="TRI", neighbors=8, filename= "../outputs/TerraTerrain/TRI.tif")
+```
+
+```{r}
+roughness <- terrain(dem1, v="roughness", neighbors=8, filename= "../outputs/TerraTerrain/roughness.tif")
+```
+
+```{r}
+flowdir <- terrain(dem1, v="flowdir", neighbors=8, filename= "../outputs/TerraTerrain/flowdir.tif")
+```
+
+# Map
+
+## dem
+
+```{r}
+( g_dem = ggplot() +
+  geom_spatraster(data = dem1) +
+  scale_fill_whitebox_c(palette = "high_relief") +
+  labs(
+    fill = "Elevation",
+    subtitle = "DEM")
+)
+```
+
+## aspect
+
+```{r}
+( g_aspect = ggplot() +
+  geom_spatraster(data = aspect) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "Aspect degrees",
+    subtitle = "Terra - Aspect")
+)
+```
+
+## Slope
+
+```{r}
+( g_slope = ggplot() +
+  geom_spatraster(data = slope) +
+  scale_fill_whitebox_c(palette = "arid") +
+  labs(
+    fill = "Slope radians",
+    subtitle = "Terra - Slope")
+)
+```
+
+## TPI
+
+```{r}
+( g_TPI = ggplot() +
+  geom_spatraster(data = TPI) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "TPI",
+    subtitle = "Terra - TPI")
+)
+```
+
+## TRI
+
+```{r}
+( g_TRI = ggplot() +
+  geom_spatraster(data = TRI) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "TRI",
+    subtitle = "Terra - TRI")
+)
+```
+
+## Roughness
+
+```{r}
+( g_roughness = ggplot() +
+  geom_spatraster(data = roughness) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "roughness",
+    subtitle = "Terra - roughness")
+)
+```
+
+## Flow direction
+
+```{r}
+( g_flowdir = ggplot() +
+  geom_spatraster(data = flowdir) +
+  scale_fill_whitebox_c(palette = "muted") +
+  labs(
+    fill = "flow dir",
+    subtitle = "Terra - flow direction")
+)
+```
+
+# Save graphs
+```{r}
+ggsave("../figures/MapsTerra/dem.jpeg", plot = g_dem,  dpi = 300)
+ggsave("../figures/MapsTerra/slope.jpeg", plot = g_slope,  dpi = 300)
+ggsave("../figures/MapsTerra/aspect.jpeg", plot = g_aspect,  dpi = 300)
+ggsave("../figures/MapsTerra/TPI.jpeg", plot = g_TPI,  dpi = 300)
+ggsave("../figures/MapsTerra/TRI.jpeg", plot = g_TRI,  dpi = 300)
+ggsave("../figures/MapsTerra/roughness.jpeg", plot = g_roughness,  dpi = 300)
+ggsave("../figures/MapsTerra/flowdir.jpeg", plot = g_flowdir,  dpi = 300)
+```
