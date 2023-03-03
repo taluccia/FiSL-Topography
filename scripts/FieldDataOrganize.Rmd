@@ -54,6 +54,12 @@ sk_field
 nwt_plains = field %>% filter(ecoregion_name_l2 == "Taiga Plains")
 nwt_shield = field %>% filter(ecoregion_name_l2 == "Taiga Shield")
 ```
+
+# Fire Years
+```{r}
+unique(nwt_field$burn_year)
+```
+
 # Range of Latitude and Longitude
 
 ## NWT
@@ -124,6 +130,8 @@ nwt_shield %>%
   dplyr::select(UniqueId, IDobj:geometry)
 ```
 
+
+
 # Write to csv
 ```{r eval=FALSE, include=FALSE}
 write.csv(nwt_field, "../outputs/FieldCSV/Field1983-2016/nwt_field.csv", row.names=FALSE)
@@ -181,12 +189,20 @@ head(nwt_field2)
 plot(st_geometry(nwt_field2))
 ```
 
+# Select NWT 2014 burned points
+
+```{r}
+nwt2014 = nwt_field2 %>% dplyr::filter(burn_year==2014)
+```
 ## Write to shapefile
 
 ```{r eval=FALSE, include=FALSE}
 st_write(nwt_field2, "../outputs/FieldPoints/Field1983-2016/NWTPoints1983-2016.shp", driver="ESRI Shapefile")
 ```
 
+```{r eval=FALSE, include=FALSE}
+st_write(nwt2014, "../outputs/FieldPoints/Field1983-2016/NWTPoints2014.shp", driver="ESRI Shapefile")
+```
 
 ## NWT Shield
 For NWT Shield points for testing topo variable calculations
