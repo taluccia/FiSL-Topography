@@ -1,0 +1,91 @@
+---
+title: "One Fire Figures"
+author: "Anna Talucci"
+date: "2023-03-06"
+output: html_document
+---
+
+
+# Overview
+
+plot points
+
+# Packages 
+
+```{r}
+library(tidyverse)
+```
+
+# Data
+
+## Saga
+
+```{r}
+saga = read.csv("../data/PointTerrain/extractTerrainSaga.csv")
+```
+
+## Terra
+```{r}
+terra = read.csv("../data/PointTerrain/extractTerrainTerra.csv")
+```
+
+## Field
+```{r}
+field = read.csv("../data/FieldCSV/Field1983-2016/nwt_field.csv")
+```
+
+# Look at data
+
+```{r}
+head(saga)
+head(terra)
+head(field)
+```
+
+# Join field and terrain data
+```{r}
+unique(terra$project_id)
+```
+
+```{r}
+id_list = c("NWT.sf.102", "NWT.sf.103", "NWT.sf.138", "NWT.sf.139", "NWT.sf.140", "NWT.sf.141", "NWT.sf.142", "NWT.sf.143", "NWT.sf.144", "NWT.sf.145", "NWT.sf.146", "NWT.sf.147", "NWT.sf.148", "NWT.sf.149", "NWT.sf.150", "NWT.sf.151", "NWT.sf.152", "NWT.sf.153", "NWT.sf.154", "NWT.sf.155", "NWT.sf.156", "NWT.sf.157", "NWT.sf.158", "NWT.sf.159", "NWT.sf.160", "NWT.sf.161")
+```
+
+
+```{r}
+(
+  field_saga = field %>% 
+    dplyr::select(project_id, latitude, longitude, moisture) %>%
+    dplyr::filter(project_id %in% id_list) %>%
+    left_join(., saga, by = "project_id") 
+)
+```
+```{r}
+
+unique(field$moisture)
+```
+xeric, subxeric, subxeric to mesic, mesic, mesic to subhygric, and subhygric
+```{r}
+(
+  field_terra = field %>% 
+    dplyr::select(project_id, latitude, longitude, moisture) %>%
+    dplyr::filter(project_id %in% id_list) %>%
+    left_join(., terra, by = "project_id") %>%
+    mutate(soil = ifelse(moisture ==1, "xeric",
+                                     ifelse(moisture == 2, "subxeric",
+                                            ifelse(moisture == 3, "subxeric-mesic",
+                                                   ifelse(moisture == 4, "mesic",
+                                                          ifelse(moisture == 5, "mesic-subhygric",
+                                                   ifelse(moisture == 6, "subhygric", "NA")))))))
+)
+```
+
+
+# Graphs
+
+```{r}
+(
+  p1 = ggplot(data = field_terra, aes(x=as.character(moisture), y=SWIL1)) +
+    geom_boxplot()
+)
+```
