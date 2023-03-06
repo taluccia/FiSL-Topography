@@ -80,3 +80,5 @@ In terminal with homebrew `brew install saga-gis`
 Use code from Krawchuk et al Ecosphere 2016 paper, [linked here](https://www.sciencebase.gov/catalog/item/53db9ca0e4b0fba533faf4be)
 
 
+# Calculation for TWI
+[see here](https://courses.gisopencourseware.org/mod/book/tool/print/index.php?id=41)
