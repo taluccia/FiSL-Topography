@@ -16,6 +16,7 @@ Terrain analysis with `Terra` package R
 library(terra)
 library(gdalUtilities)
 library(sf)
+library(topmodel)
 ```
 
 # Data
@@ -26,6 +27,12 @@ library(sf)
 dem1<-rast("../data/FireDEM/DEMEA1NWT2014.tif")
 ```
 
+## Fire
+```{r}
+nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
+fire = st_read("../data//SelectFires/NWT1_ea.shp", "NWT1_ea")
+```
+
 # Terrain with Terra
 
 ## Slope
@@ -34,25 +41,36 @@ terrain(x, v="slope", neighbors=8, unit="degrees", filename="", ...)
 slope <- terrain(dem1, v="slope", neighbors=8, unit="radians", filename= "../outputs/TerraTerrain/slope.tif")
 ```
 
+## Aspect
+
 ```{r}
 aspect <- terrain(dem1, v="aspect", neighbors=8, unit="degrees", filename= "../outputs/TerraTerrain/aspect.tif")
 ```
+
+## TPI
 
 ```{r}
 TPI <- terrain(dem1, v="TPI", neighbors=8, filename= "../outputs/TerraTerrain/TPI.tif")
 ```
 
+## TRI
+
 ```{r}
 TRI <- terrain(dem1, v="TRI", neighbors=8, filename= "../outputs/TerraTerrain/TRI.tif")
 ```
+
+## Roughness
 
 ```{r}
 roughness <- terrain(dem1, v="roughness", neighbors=8, filename= "../outputs/TerraTerrain/roughness.tif")
 ```
 
+## Flow direction
+
 ```{r}
 flowdir <- terrain(dem1, v="flowdir", neighbors=8, filename= "../outputs/TerraTerrain/flowdir.tif")
 ```
+
 
 # Map
 
@@ -65,6 +83,17 @@ flowdir <- terrain(dem1, v="flowdir", neighbors=8, filename= "../outputs/TerraTe
   labs(
     fill = "Elevation",
     subtitle = "DEM")
+)
+```
+## DEM & Fire scar
+```{r}
+( g_demFire = ggplot() +
+  geom_spatraster(data = dem1) +
+  scale_fill_whitebox_c(palette = "high_relief") +
+  labs(
+    fill = "Elevation",
+    subtitle = "DEM") +
+  geom_sf(data = fire, fill = "white", colour=NA, alpha=0.5)
 )
 ```
 
@@ -143,6 +172,7 @@ flowdir <- terrain(dem1, v="flowdir", neighbors=8, filename= "../outputs/TerraTe
 # Save graphs
 ```{r}
 ggsave("../figures/MapsTerra/dem.jpeg", plot = g_dem,  dpi = 300)
+ggsave("../figures/MapsTerra/demFireScar.jpeg", plot = g_demFire,  dpi = 300)
 ggsave("../figures/MapsTerra/slope.jpeg", plot = g_slope,  dpi = 300)
 ggsave("../figures/MapsTerra/aspect.jpeg", plot = g_aspect,  dpi = 300)
 ggsave("../figures/MapsTerra/TPI.jpeg", plot = g_TPI,  dpi = 300)
@@ -150,3 +180,6 @@ ggsave("../figures/MapsTerra/TRI.jpeg", plot = g_TRI,  dpi = 300)
 ggsave("../figures/MapsTerra/roughness.jpeg", plot = g_roughness,  dpi = 300)
 ggsave("../figures/MapsTerra/flowdir.jpeg", plot = g_flowdir,  dpi = 300)
 ```
+
+
+

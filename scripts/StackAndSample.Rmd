@@ -15,29 +15,42 @@ Stack and sample geotiffs from RSAGA outputs
 library(terra)
 library(gdalUtilities)
 library(sf)
+library(tidyverse)
 ```
 
 
 # Data
 
-## terrain outputs
+## saga terrain outputs
 ```{r}
-rastlist <- list.files(path = "../data/SagaOutputs", pattern='.tif$', all.files= T, full.names= T)
+saga_rastlist <- list.files(path = "../data/SagaOutputs", pattern='.tif$', all.files= T, full.names= T)
 ```
 
 ```{r}
-stk1 <- terra::rast(rastlist)
+saga_stk <- terra::rast(saga_rastlist)
 ```
 
 ```{r}
-stk1
+saga_stk
+```
+
+## Terra terrain outputs
+```{r}
+terra_rastlist <- list.files(path = "../data/TerraTerrain", pattern='.tif$', all.files= T, full.names= T)
+```
+
+```{r}
+terra_stk <- terra::rast(terra_rastlist)
+```
+
+```{r}
+terra_stk
 ```
 
 ## points
 
 ```{r}
 nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
-
 ```
 
 # Reproject points
@@ -45,19 +58,57 @@ nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
 nwt_ea = st_transform(nwtpts, st_crs("+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"))
 ```
 
-
-# Plot
 ```{r}
-plot(stk1$aspect)
-plot(st_geometry(nwt_ea), add=TRUE)
+
+nwt_ea
+```
+
+# Extract values at points
+
+## Saga
+```{r}
+saga_pts = terra::extract(saga_stk, nwt_ea)
 ```
 
 ```{r}
-pts = terra::extract(stk1, nwt_ea)
+(
+saga_onefire <- 
+  nwt_ea %>%
+  #--- define ID ---#
+  mutate(ID := seq_len(nrow(.))) %>% 
+  #--- merge by ID ---#
+  left_join(., saga_pts, by = "ID") %>%
+  #--- drop nas ---#
+  drop_na() %>%
+  #--- drop geometry ---#
+  st_set_geometry(NULL)
+)
 ```
 
 ```{r}
-onefire = pts %>% drop_na()
+write.csv(saga_onefire, file = "../outputs/PointTerrain/extractTerrainSaga.csv", row.names=FALSE)
+```
 
-onefire
+## Terra
+```{r}
+terra_pts = terra::extract(terra_stk, vect(nwt_ea))
+```
+
+```{r}
+(
+terra_onefire <- 
+  nwt_ea %>%
+  #--- define ID ---#
+  mutate(ID := seq_len(nrow(.))) %>% 
+  #--- merge by ID ---#
+  left_join(., saga_pts, by = "ID") %>%
+  #--- drop nas ---#
+  drop_na() %>%
+  #--- drop geometry ---#
+  st_set_geometry(NULL)
+)
+```
+
+```{r}
+write.csv(terra_onefire, file = "../outputs/PointTerrain/extractTerrainTerra.csv", row.names=FALSE)
 ```
