@@ -1,0 +1,71 @@
+---
+title: "mosaic AKYK dem"
+author: "Anna Talucci"
+date: "2023-03-09"
+output: html_document
+---
+
+
+
+
+# Overview
+
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+```
+
+
+# Data
+
+```{r}
+first<-rast("../data/DEMs/FABDEMAKYK/FABDEMMosaicAKYK1.tif")
+```
+
+```{r}
+first
+```
+
+
+# Projections
+```{r}
+projection<-crs(last)
+projection
+```
+# Masaic with Terra 
+
+## Make list of rasters
+```{r}
+rlist <- list.files(path ="../data/DEMs/FABDEMAKYK/",pattern = ".tif$",full.names = TRUE )
+```
+
+## Define as rasters
+```{r}
+r <- lapply(rlist, rast)
+```
+
+## Make a spatial raster collection
+```{r}
+
+rsrc <- sprc(r)
+```
+
+##  Mosaic
+```{r}
+m <- mosaic(rsrc)
+```
+
+
+## Plot DEM
+
+```{r eval=FALSE, include=FALSE}
+plot(m)
+```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(m, filename="../outputs/FieldDEM/DEMFieldSK.tif")
+```

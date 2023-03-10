@@ -1,0 +1,71 @@
+---
+title: "Plots"
+author: "Anna Talucci"
+date: "2023-03-08"
+output: html_document
+---
+
+`# Overview
+
+plot points
+
+# Packages 
+
+```{r}
+library(tidyverse)
+```
+
+# Data
+
+
+
+```{r}
+points = read.csv("../data/PointTerrain/AllFieldTWI.csv")
+```
+
+# Look at the table
+```{r}
+head(points)
+```
+# Dropp -9999
+```{r}
+(
+  points1 = points %>%
+    filter(moisture != -9999)
+)
+```
+
+# Figures
+```{r}
+(
+  g1_twi = ggplot(data = points1, aes(x=as.character(moisture), y=twi)) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="TWI",
+         subtitle = "Topographic Wetness Index")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldTWI.jpeg", plot = g1_twi,  dpi = 300)
+```
+
+# Figures
+```{r}
+(
+  g2_twi = ggplot(data = points1, aes(x=as.character(moisture), y=twi)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    facet_wrap(~ecoregion) +
+    labs(x="Soil moisture", 
+         y="TWI",
+         subtitle = "Topographic Wetness Index")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldTWIbyEcoregion.jpeg", plot = g2_twi,  dpi = 300)
+```
