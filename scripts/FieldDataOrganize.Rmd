@@ -144,12 +144,29 @@ write.csv(nwt_shield, "../outputs/FieldCSV/Field1983-2016/nwt_shield.csv", row.n
 ```
 
 # Convert to point shapefile with WGS 84 
+## All field p to points
+
+```{r}
+(
+  all_field = field %>%
+    dplyr::select(project_id:longitude, moisture) %>%
+    rename(proj_name = project_name, ecoregion = ecoregion_name_l2) %>%
+    st_as_sf(.,coords=c("longitude", "latitude"),crs=4326)
+)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+st_write(all_field, "../outputs/FieldPoints/Field1983-2016/AllPoints1983-2016.shp", driver="ESRI Shapefile")
+```
 
 ## SK
 ```{r}
 sk_field
 
 ```
+
+
 
 ```{r}
 sk_field2 = sk_field %>% 
@@ -175,10 +192,12 @@ st_write(sk_field2, "../outputs/FieldPoints/Field1983-2016/SKPoints1983-2016.shp
 
 ## NWT 
 ```{r}
-nwt_field2 = nwt_field %>% 
-  dplyr::select(project_id:longitude) %>%
+( 
+  nwt_field2 = nwt_field %>% 
+  dplyr::select(project_id:longitude, moisture) %>%
   rename(proj_name = project_name, ecoregion = ecoregion_name_l2) %>%
   st_as_sf(.,coords=c("longitude", "latitude"),crs=4326)
+)
 ```
 
 ```{r}

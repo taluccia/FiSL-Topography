@@ -29,6 +29,10 @@ saga = read.csv("../data/PointTerrain/extractTerrainSaga.csv")
 terra = read.csv("../data/PointTerrain/extractTerrainTerra.csv")
 ```
 
+```{r}
+tagee = read.csv("../data/PointTerrain/NWT1FireFABDEM.csv")
+```
+
 ## Field
 ```{r}
 field = read.csv("../data/FieldCSV/Field1983-2016/nwt_field.csv")
@@ -39,6 +43,7 @@ field = read.csv("../data/FieldCSV/Field1983-2016/nwt_field.csv")
 ```{r}
 head(saga)
 head(terra)
+head(tagee)
 head(field)
 ```
 
@@ -51,7 +56,7 @@ unique(terra$project_id)
 id_list = c("NWT.sf.102", "NWT.sf.103", "NWT.sf.138", "NWT.sf.139", "NWT.sf.140", "NWT.sf.141", "NWT.sf.142", "NWT.sf.143", "NWT.sf.144", "NWT.sf.145", "NWT.sf.146", "NWT.sf.147", "NWT.sf.148", "NWT.sf.149", "NWT.sf.150", "NWT.sf.151", "NWT.sf.152", "NWT.sf.153", "NWT.sf.154", "NWT.sf.155", "NWT.sf.156", "NWT.sf.157", "NWT.sf.158", "NWT.sf.159", "NWT.sf.160", "NWT.sf.161")
 ```
 
-
+## Field + SAGA
 ```{r}
 (
   field_saga = field %>% 
@@ -64,7 +69,7 @@ id_list = c("NWT.sf.102", "NWT.sf.103", "NWT.sf.138", "NWT.sf.139", "NWT.sf.140"
 
 unique(field$moisture)
 ```
-xeric, subxeric, subxeric to mesic, mesic, mesic to subhygric, and subhygric
+## Field + Terra
 ```{r}
 (
   field_terra = field %>% 
@@ -80,12 +85,541 @@ xeric, subxeric, subxeric to mesic, mesic, mesic to subhygric, and subhygric
 )
 ```
 
-
-# Graphs
+## Field + TAGEE
+```{r}
+(
+  tagee1 = tagee %>% 
+    rename("project_id"= "prjct_d") %>%
+    select(-system.index, -.geo)
+)
+```
 
 ```{r}
 (
-  p1 = ggplot(data = field_terra, aes(x=as.character(moisture), y=SWIL1)) +
-    geom_boxplot()
+  field_tagee = field %>% 
+    dplyr::select(project_id, latitude, longitude, moisture) %>%
+    dplyr::filter(project_id %in% id_list) %>%
+    left_join(., tagee1, by = "project_id") 
 )
+```
+# Graphs
+
+## SAGA 
+
+### SAGA Aspect
+```{r}
+(
+  p1 = ggplot(data = field_saga, aes(x=as.character(moisture), y=aspect)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="aspect (degrees)",
+         subtitle = "SAGA Aspect")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/aspect.jpeg", plot = p1,  dpi = 300)
+```
+
+### SAGA ccros
+```{r}
+(
+  p2 = ggplot(data = field_saga, aes(x=as.character(moisture), y=ccros)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Cross sectional curvature",
+         subtitle = "SAGA Cross sectional curvature")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/ccros.jpeg", plot = p2,  dpi = 300)
+```
+
+### SAGA cgene
+
+```{r}
+(
+  p3 = ggplot(data = field_saga, aes(x=as.character(moisture), y=cgene)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="General Curvature", 
+         subtitle = "SAGA General Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/cgene.jpeg", plot = p3,  dpi = 300)
+```
+
+### SAGA clong
+
+```{r}
+(
+  p4 = ggplot(data = field_saga, aes(x=as.character(moisture), y=clong)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Longitudinal Curvature", 
+         subtitle = "SAGA Longitudinal Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/clong.jpeg", plot = p4,  dpi = 300)
+```
+
+### SAGA cmaxi
+
+```{r}
+(
+  p5 = ggplot(data = field_saga, aes(x=as.character(moisture), y=cmaxi)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Maximum Curvature", 
+         subtitle = "SAGA Maximum Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/cmaxi.jpeg", plot = p5,  dpi = 300)
+```
+
+### SAGA cmini
+```{r}
+(
+  p6 = ggplot(data = field_saga, aes(x=as.character(moisture), y=cmini)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Minimum Curvature", 
+         subtitle = "SAGA Minimum Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/cmini.jpeg", plot = p6,  dpi = 300)
+```
+
+### SAGA cplan
+```{r}
+(
+  p7 = ggplot(data = field_saga, aes(x=as.character(moisture), y=cplan)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Plan Curvature", 
+         subtitle = "SAGA Plan Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/cplan.jpeg", plot = p7,  dpi = 300)
+```
+
+### SAGA cprof
+
+```{r}
+(
+  p8 = ggplot(data = field_saga, aes(x=as.character(moisture), y=cprof)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Profile Curvature", 
+         subtitle = "SAGA Profile Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/cprof.jpeg", plot = p8,  dpi = 300)
+```
+
+### SAGA croto
+
+```{r}
+(
+  p9 = ggplot(data = field_saga, aes(x=as.character(moisture), y=croto)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Flow line Curvature", 
+         subtitle = "SAGA flow line Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/croto.jpeg", plot = p9,  dpi = 300)
+```
+
+### SAGA ctang
+
+```{r}
+(
+  p10 = ggplot(data = field_saga, aes(x=as.character(moisture), y=ctang)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Tangential Curvature",
+         subtitle = "SAGA Tangential Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/ctang.jpeg", plot = p10,  dpi = 300)
+```
+
+### SAGA ctota
+
+```{r}
+(
+  p11 = ggplot(data = field_saga, aes(x=as.character(moisture), y=ctota)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Total Curvature",
+         subtitle = "SAGA Total Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/ctota.jpeg", plot = p11,  dpi = 300)
+```
+
+### SAGA flowpath
+
+```{r}
+(
+  p12 = ggplot(data = field_saga, aes(x=as.character(moisture), y=flowpath)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="flowpath",
+         subtitle = "SAGA flowpath")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/flowpath.jpeg", plot = p12,  dpi = 300)
+```
+
+### SAGA slope
+
+```{r}
+(
+  p13 = ggplot(data = field_saga, aes(x=as.character(moisture), y=slope)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Slope (radians)",
+         subtitle = "SAGA slope")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/slope.jpeg", plot = p13,  dpi = 300)
+```
+
+### SAGA SWIL
+
+```{r}
+(
+  p14 = ggplot(data = field_saga, aes(x=as.character(moisture), y=SWIL1)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Topographic Wetness Index (local)",
+         subtitle = "SAGA Wetness Index (Local)")
+  
+)
+```
+```{r}
+ggsave("../figures/Boxplots/swil.jpeg", plot = p14,  dpi = 300)
+```
+
+### SAGA SWIC
+```{r}
+(
+  p15 = ggplot(data = field_saga, aes(x=as.character(moisture), y=SWIC1)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Topographic Wetness Index (catchment)", 
+         subtitle = "SAGA Wetness Index (Catchment)")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/swic.jpeg", plot = p15,  dpi = 300)
+```
+
+
+## Terra metrics
+
+### Terra Aspect
+```{r}
+(
+  p16 = ggplot(data = field_terra, aes(x=as.character(moisture), y=aspect)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="aspect (degrees)",
+         subtitle = "Terra Aspect")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/terraAspect.jpeg", plot = p16,  dpi = 300)
+```
+
+### Terra Flow dir
+
+```{r}
+(
+  p17 = ggplot(data = field_terra, aes(x=as.character(moisture), y=flowdir)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Flow direction", 
+         subtitle = "Terra Flow Direction")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TerraFlowDir.jpeg", plot = p17,  dpi = 300)
+```
+
+### Terra Roughness
+```{r}
+(
+  p18 = ggplot(data = field_terra, aes(x=as.character(moisture), y=roughness)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Roughness",
+         subtitle = "Terra roughness")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TerraRoughness.jpeg", plot = p18,  dpi = 300)
+```
+
+
+
+### Terra Slope
+```{r}
+(
+  p19 = ggplot(data = field_terra, aes(x=as.character(moisture), y=slope)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Slope (radians)",
+         subtitle = "Terra slope")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TerraSlope.jpeg", plot = p19,  dpi = 300)
+```
+
+### Terra TPI
+```{r}
+(
+  p20 = ggplot(data = field_terra, aes(x=as.character(moisture), y=TPI)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Topographic Position Index", 
+         subtitle = "Terra TPI")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TPI.jpeg", plot = p20,  dpi = 300)
+```
+
+### Terra TPI
+```{r}
+(
+  p21 = ggplot(data = field_terra, aes(x=as.character(moisture), y=TRI)) +
+    geom_boxplot() +
+    labs(x="soil moisture", 
+         y="Topographic Ruggedness Index", 
+         subtitle = "Terra TRI")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TRI.jpeg", plot = p21,  dpi = 300)
+```
+
+## TAGEE Plots
+
+```{r}
+field_tagee
+```
+
+### Aspect
+```{r}
+(
+  p22 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=Aspect)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="soil moisture", 
+         y="Aspect", 
+         subtitle = "TAGEE Aspect")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeAspect.jpeg", plot = p22,  dpi = 300)
+```
+
+### Eastness
+```{r}
+(
+  p22 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=Aspect)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="soil moisture", 
+         y="Aspect", 
+         subtitle = "TAGEE Aspect")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeAspect.jpeg", plot = p22,  dpi = 300)
+```
+
+### GaussianCurvature
+
+```{r}
+(
+  p23 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=GaussianCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Gaussian Curvature", 
+         subtitle = "TAGEE Gaussian Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeGaussianCurvature.jpeg", plot = p23,  dpi = 300)
+```
+
+### HorizontalCurvature
+
+```{r}
+(
+  p24 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=HorizontalCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Horizontal Curvature", 
+         subtitle = "TAGEE Horizontal Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeHorizontalCurvature.jpeg", plot = p24,  dpi = 300)
+```
+
+### MaximalCurvature
+```{r}
+(
+  p25 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=MaximalCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Maximal Curvature", 
+         subtitle = "TAGEE Maximal Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeMaximalCurvature.jpeg", plot = p25,  dpi = 300)
+```
+
+### MeanCurvature
+```{r}
+(
+  p26 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=MeanCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Mean Curvature", 
+         subtitle = "TAGEE Mean Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeMeanCurvature.jpeg", plot = p26,  dpi = 300)
+```
+
+### MinimalCurvature
+```{r}
+(
+  p27 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=MinimalCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Minimal Curvature", 
+         subtitle = "TAGEE Minimal Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeMinimalCurvature.jpeg", plot = p27,  dpi = 300)
+```
+
+### Northness
+```{r}
+(
+  p28 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=Northness)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Northness", 
+         subtitle = "TAGEE Northness")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeNorthness.jpeg", plot = p28,  dpi = 300)
+```
+
+### ShapeIndex
+```{r}
+(
+  p29 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=ShapeIndex)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Shape Index", 
+         subtitle = "TAGEE Shape Index")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeShapeIndex.jpeg", plot = p29,  dpi = 300)
+```
+
+### Slope
+```{r}
+(
+  p30 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=Slope)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Slope", 
+         subtitle = "TAGEE Slope")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeSlope.jpeg", plot = p30,  dpi = 300)
+```
+
+### VerticalCurvature
+```{r}
+(
+  p31 = ggplot(data = field_tagee, aes(x=as.character(moisture), y=VerticalCurvature)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    labs(x="Soil moisture", 
+         y="Vertical Curvature", 
+         subtitle = "TAGEE Vertical Curvature")
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/TAGeeVerticalCurvature.jpeg", plot = p31,  dpi = 300)
 ```

@@ -101,7 +101,7 @@ terra_onefire <-
   #--- define ID ---#
   mutate(ID := seq_len(nrow(.))) %>% 
   #--- merge by ID ---#
-  left_join(., saga_pts, by = "ID") %>%
+  left_join(., terra_pts, by = "ID") %>%
   #--- drop nas ---#
   drop_na() %>%
   #--- drop geometry ---#
