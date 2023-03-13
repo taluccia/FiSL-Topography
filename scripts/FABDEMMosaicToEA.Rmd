@@ -1,0 +1,135 @@
+---
+title: "FAB DEM Mosaic"
+author: "Anna Talucci"
+date: "2023-03-10"
+output: html_document
+---
+
+# Overview
+
+Combine DEM tiles for study areas
+
+SK field sites latitude and longitude range from FAB DEM from Compernicus (bare earth)
+
+Lat long range for SK
+Latitude (N)
+[1] 53.1911
+[1] 57.3646
+
+Longitude (W)
+[1] -111.3801
+[1] -88.612
+
+Lat long range for NWT
+Latitude (N)
+[1] 60.2151
+[1] 64.1714
+
+Longitude (W)
+[1] -121.0111
+[1] -113.0163
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+```
+
+
+# Data
+
+```{r}
+first<-rast("../data/DEMs/DEMFieldSK/N53W088_FABDEM_V1-0.tif")
+last<-rast("../data/DEMs/DEMFieldSK/N57W112_FABDEM_V1-0.tif")
+```
+
+```{r}
+first
+```
+
+```{r}
+last
+```
+
+# Projections
+```{r}
+projection<-crs(last)
+projection
+```
+
+# Masaic with Terra 
+
+## Make list of rasters
+```{r}
+sk_rlist <- list.files(path ="../data/DEMs/DEMFieldSK/",pattern = ".tif$",full.names = TRUE )
+nwt_rlist <- list.files(path ="../data/DEMs/DEMFieldNWT/",pattern = ".tif$",full.names = TRUE )
+ak_rlist <- list.files(path ="../data/DEMs/DEMFieldAK/",pattern = ".tif$",full.names = TRUE )
+yk_rlist <- list.files(path ="../data/DEMs/DEMFieldYK/",pattern = ".tif$",full.names = TRUE )
+```
+
+## Define as rasters
+```{r}
+sk_r <- lapply(sk_rlist, rast)
+nwt_r <- lapply(nwt_rlist, rast)
+ak_r <- lapply(ak_rlist, rast)
+yk_r <- lapply(yk_rlist,   rast)
+```
+
+## Make a spatial raster collection
+```{r}
+sk_rsrc <- sprc(sk_r)
+nwt_rsrc <- sprc(nwt_r)
+ak_rsrc <- sprc(ak_r)
+yk_rsrc <- sprc(yk_r)
+```
+
+##  Mosaic
+```{r}
+sk_m <- mosaic(sk_rsrc)
+nwt_m <- mosaic(nwt_rsrc)
+ak_m <- mosaic(ak_rsrc)
+yk_m <- mosaic(yk_rsrc)
+```
+
+# Reproject to Equal area
+```{r}
+sk_ea = project(sk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+
+nwt_ea = project(nwt_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+
+ak_ea = project(ak_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+
+yk_ea = project(yk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+# Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(sk_m, filename="../outputs/FieldDEM/FABDEM_EA_SK.tif")
+writeRaster(nwt_m, filename="../outputs/FieldDEM/FABDEM_EA_NWT.tif")
+writeRaster(ak_m, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif")
+writeRaster(yk_m, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif")
+```
+
+# Plot DEM
+
+```{r eval=FALSE, include=FALSE}
+plot(sk_m)
+plot(st_geometry(points), add=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+plot(nwt_m)
+plot(st_geometry(points), add=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+plot(ak_m)
+plot(st_geometry(points), add=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+plot(yk_m)
+plot(st_geometry(points), add=TRUE)
+```
