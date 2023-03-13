@@ -14,7 +14,10 @@ Use
 DEM is bare earth removal of trees at 30 m resolution. Chosen over Arctic DEM
 [Topography Metrics](https://www.sciencebase.gov/catalog/item/53db9ca0e4b0fba533faf4be)
 [Field Data](https://daac.ornl.gov/ABOVE/guides/ABoVE_Plot_Data_Burned_Sites.html)
+[field data 1983-2016](https://daac.ornl.gov/ABOVE/guides/ABoVE_Plot_Data_Burned_Sites.html)
 
+
+[tree canopy ABoVE](https://daac.ornl.gov/cgi-bin/dsviewer.pl?ds_id=2012)
 
 Topography Metrics (adapting code Sandra Haire)
 
