@@ -26,8 +26,8 @@ library(sf)
 # Data
 
 ```{r}
-first<-rast("../data/DEMFieldAK/N62/N62W142_FABDEM_V1-0.tif")
-last<-rast("../data/DEMFieldAK/n62/N62W151_FABDEM_V1-0.tif")
+first<-rast("../data/DEMFieldAK/N62W142_FABDEM_V1-0.tif")
+last<-rast("../data/DEMFieldAK/N62W151_FABDEM_V1-0.tif")
 ```
 
 ```{r}
@@ -36,6 +36,9 @@ first
 
 ```{r}
 last
+```
+```{r}
+points = st_read("../data/FieldPoints/Field1983-2016/AllPoints1983-2016.shp", "AllPoints1983-2016")
 ```
 
 # Projections
@@ -71,6 +74,7 @@ m <- mosaic(rsrc)
 
 ```{r}
 plot(m)
+plot(st_geometry(points), add=TRUE)
 ```
 
 ```{r eval=FALSE, include=FALSE}
