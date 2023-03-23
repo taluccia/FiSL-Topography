@@ -24,6 +24,10 @@ skDEM<-rast("../data/FieldDEM/DEMFieldSK.tif")
 nwtDEM<-rast("../data/FieldDEM//DEMFieldNWT.tif")
 ```
 
+```{r}
+nwtDEM
+```
+
 ## Fires
 ```{r}
 skfp = st_read("../data/SelectFires/SK2015.shp", "SK2015")
@@ -34,7 +38,7 @@ nwtfp = st_read("../data/SelectFires/NWT2014.shp", "NWT2014")
 
 # Field points
 ```{r}
-nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
+nwtpts = st_read("../data/FieldPoints/Field1983-2016/NWTPoints2014.shp", "NWTPoints2014")
 
 ```
 # Explore
@@ -94,6 +98,9 @@ clip_nwt = crop(nwtDEM, nwtwgs)
 clip_nwt1 = crop(nwtDEM, nwt1)
 ```
 
+```{r}
+clip_nwt1
+```
 # Plot
 
 ```{r eval=FALSE, include=FALSE}
@@ -112,7 +119,7 @@ plot(st_geometry(nwtpts), add=TRUE)
 ```
 
 ```{r eval=FALSE, include=FALSE}
-plot(clip_nwt)
+plot(clip_nwt1)
 plot(st_geometry(nwt1), add=TRUE)
 ```
 
@@ -194,4 +201,8 @@ writeRaster(nwt_ea, filename="../outputs/FireDEM/DEMEANWT2014.asc", datatype = "
 
 ```{r eval=FALSE, include=FALSE}
 writeRaster(nwt_ea1, filename="../outputs/FireDEM/DEMEA1NWT2014.asc", filetype = "AAIGrid", overwrite=TRUE)
+```
+
+```{r eval=FALSE, include=FALSE}
+writeRaster(clip_nwt1, filename="../outputs/FireDEM/DEM1NWTwgs.asc", filetype = "AAIGrid", overwrite=TRUE)
 ```
