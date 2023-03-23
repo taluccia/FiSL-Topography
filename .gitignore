@@ -38,6 +38,16 @@ rsconnect/
 
 # For Mac users computer specific files
 **/.DS_Store
+**/._.DS_Store
+**/._FiSL-Topography.Rproj
+**/._data
+**/._figures
+**/._outputs
+**/functions/._run.metric.R
+**/functions/._terrain.function.calls.R
+**/scripts/._FieldDataOrganize.Rmd
+**/scripts/GeoTiffToASCii.Rmd
+**/._README.html
 
 # exclude specific folders from push to github
 figures/*
