@@ -55,6 +55,11 @@ nwt_plains = field %>% filter(ecoregion_name_l2 == "Taiga Plains")
 nwt_shield = field %>% filter(ecoregion_name_l2 == "Taiga Shield")
 ```
 
+```{r}
+sk_plains = field %>% filter(ecoregion_name_l2 == "Boreal Plains")
+sk_shield = field %>% filter(ecoregion_name_l2 == "Softwood Shield")
+```
+
 # Fire Years
 ```{r}
 unique(nwt_field$burn_year)
@@ -113,6 +118,26 @@ max(sk_field$latitude)
 min(sk_field$longitude)
 max(sk_field$longitude)
 ```
+
+```{r}
+min(sk_plains$latitude)
+max(sk_plains$latitude)
+```
+
+```{r}
+min(sk_plains$longitude)
+max(sk_plains$longitude)
+```
+```{r}
+min(sk_shield$latitude)
+max(sk_shield$latitude)
+```
+
+```{r}
+min(sk_shield$longitude)
+max(sk_shield$longitude)
+```
+
 ```{r}
 nrow(nwt_shield)
 ```
