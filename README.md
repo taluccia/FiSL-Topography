@@ -6,7 +6,8 @@ Calculate multiple terrain variables to evaluate roll in burn severity for FiSL 
 
 Moisture gradient are important predictors of burn severity in Boreal forests that have more simple topographic features compared to sub alpine forests. 
 
-
+# Notes on Steps
+1. FABDEMMosaicToEA.Rmd Combine FEB DEMs for each study area
 
 ## Data and processing
 Use 
