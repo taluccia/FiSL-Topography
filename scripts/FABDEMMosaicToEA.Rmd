@@ -40,6 +40,21 @@ library(sf)
 
 # Data
 
+## Points
+```{r}
+pts = st_read("../data/FieldPoints/Field1983-2016/SKPoints1983-2016.shp", "SKPoints1983-2016") 
+```
+
+```{r}
+head(pts)
+```
+
+```{r}
+pt_shield = pts %>% filter(ecoregion =="Softwood Shield") 
+pt_plains = pts %>% filter(ecoregion =="Boreal Plains") 
+```
+
+## Look at 1st and last sk raster
 ```{r}
 first<-rast("../data/DEMs/DEMFieldSK/N53W088_FABDEM_V1-0.tif")
 last<-rast("../data/DEMs/DEMFieldSK/N57W112_FABDEM_V1-0.tif")
@@ -61,55 +76,128 @@ projection
 
 # Masaic with Terra 
 
-## Make list of rasters
+## Yukon 
+### Make list of rasters
+```{r}
+yk_rlist <- list.files(path ="../data/DEMs/DEMFieldYK/",pattern = ".tif$",full.names = TRUE )
+```
+
+### Define as rasters
+```{r}
+yk_r <- lapply(yk_rlist,   rast)
+```
+
+###  Make a spatial raster collection
+```{r}
+yk_rsrc <- sprc(yk_r)
+```
+
+###  Mosaic
+```{r}
+yk_m <- mosaic(yk_rsrc)
+```
+
+### Reproject to Equal area
+```{r}
+yk_ea = project(yk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(yk_m, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif")
+```
+
+## Alaska
+### Make list of rasters
+```{r}
+ak_rlist <- list.files(path ="../data/DEMs/DEMFieldAK/",pattern = ".tif$",full.names = TRUE )
+```
+
+### Define as rasters
+```{r}
+ak_r <- lapply(ak_rlist, rast)
+```
+
+### Make a spatial raster collection
+```{r}
+ak_rsrc <- sprc(ak_r)
+```
+
+###  Mosaic
+```{r}
+ak_m <- mosaic(ak_rsrc)
+```
+
+### Reproject to Equal area
+```{r}
+ak_ea = project(ak_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(ak_m, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif")
+```
+
+## NWT
+### Make list of rasters
+```{r}
+nwt_rlist <- list.files(path ="../data/DEMs/DEMFieldNWT/",pattern = ".tif$",full.names = TRUE )
+```
+
+## Define as rasters
+```{r}
+nwt_r <- lapply(nwt_rlist, rast)
+```
+
+## Make a spatial raster collection
+```{r}
+nwt_rsrc <- sprc(nwt_r)
+```
+
+###  Mosaic
+```{r}
+nwt_m <- mosaic(nwt_rsrc)
+```
+
+### Reproject to Equal area
+```{r}
+nwt_ea = project(nwt_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(nwt_m, filename="../outputs/FieldDEM/FABDEM_EA_NWT.tif")
+```
+
+## Sk
+### Make list of rasters
 ```{r}
 sk_rlist <- list.files(path ="../data/DEMs/DEMFieldSK/",pattern = ".tif$",full.names = TRUE )
-nwt_rlist <- list.files(path ="../data/DEMs/DEMFieldNWT/",pattern = ".tif$",full.names = TRUE )
-ak_rlist <- list.files(path ="../data/DEMs/DEMFieldAK/",pattern = ".tif$",full.names = TRUE )
-yk_rlist <- list.files(path ="../data/DEMs/DEMFieldYK/",pattern = ".tif$",full.names = TRUE )
 ```
 
 ## Define as rasters
 ```{r}
 sk_r <- lapply(sk_rlist, rast)
-nwt_r <- lapply(nwt_rlist, rast)
-ak_r <- lapply(ak_rlist, rast)
-yk_r <- lapply(yk_rlist,   rast)
 ```
 
-## Make a spatial raster collection
+### Make a spatial raster collection
 ```{r}
 sk_rsrc <- sprc(sk_r)
-nwt_rsrc <- sprc(nwt_r)
-ak_rsrc <- sprc(ak_r)
-yk_rsrc <- sprc(yk_r)
 ```
 
-##  Mosaic
+###  Mosaic
 ```{r}
 sk_m <- mosaic(sk_rsrc)
-nwt_m <- mosaic(nwt_rsrc)
-ak_m <- mosaic(ak_rsrc)
-yk_m <- mosaic(yk_rsrc)
 ```
 
-# Reproject to Equal area
+### Reproject to Equal area
 ```{r}
 sk_ea = project(sk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
-
-nwt_ea = project(nwt_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
-
-ak_ea = project(ak_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
-
-yk_ea = project(yk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
 ```
 
-# Save Raster Mosaic
+### Save Raster Mosaic
 ```{r eval=FALSE, include=FALSE}
 writeRaster(sk_m, filename="../outputs/FieldDEM/FABDEM_EA_SK.tif")
-writeRaster(nwt_m, filename="../outputs/FieldDEM/FABDEM_EA_NWT.tif")
-writeRaster(ak_m, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif")
-writeRaster(yk_m, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif")
 ```
 
 # Plot DEM
