@@ -19,96 +19,65 @@ library(tidyverse)
 ```
 
 
-# Data
 
-## saga terrain outputs
+
+# Data Points
+
 ```{r}
-saga_rastlist <- list.files(path = "../data/SagaOutputs", pattern='.tif$', all.files= T, full.names= T)
+pts = st_read("../data/FieldPoints/Field1983-2016/AllPointsEA1983-2016.shp", "AllPointsEA1983-2016") 
+```
+```{r}
+pts
+```
+
+## Filter for groups
+
+```{r}
+( yk = pts %>% filter(group1 =="YK") )
+```
+
+# Rasters
+
+```{r}
+rastlist <- list.files(path = "../data/SagaGeotiffs/yk", pattern='.tif$', all.files= T, full.names= T)
+rastlist
+```
+```{r}
+rast(rastlist[5])
+```
+
+
+
+
+```{r}
+raststk <- terra::rast(rastlist[5:8])
 ```
 
 ```{r}
-saga_stk <- terra::rast(saga_rastlist)
+raststk
 ```
 
 ```{r}
-saga_stk
-```
-
-## Terra terrain outputs
-```{r}
-terra_rastlist <- list.files(path = "../data/TerraTerrain", pattern='.tif$', all.files= T, full.names= T)
-```
-
-```{r}
-terra_stk <- terra::rast(terra_rastlist)
-```
-
-```{r}
-terra_stk
-```
-
-## points
-
-```{r}
-nwtpts = st_read("../data/FieldPoints/NWTPoints2014.shp", "NWTPoints2014")
-```
-
-# Reproject points
-```{r}
-nwt_ea = st_transform(nwtpts, st_crs("+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"))
-```
-
-```{r}
-
-nwt_ea
-```
-
-# Extract values at points
-
-## Saga
-```{r}
-saga_pts = terra::extract(saga_stk, nwt_ea)
+extractPts = terra::extract(raststk,yk)
 ```
 
 ```{r}
 (
-saga_onefire <- 
-  nwt_ea %>%
+df <- 
+  yk %>%
   #--- define ID ---#
   mutate(ID := seq_len(nrow(.))) %>% 
   #--- merge by ID ---#
-  left_join(., saga_pts, by = "ID") %>%
-  #--- drop nas ---#
-  drop_na() %>%
+  left_join(., extractPts, by = "ID") %>%
+  
   #--- drop geometry ---#
-  st_set_geometry(NULL)
+  st_set_geometry(NULL) %>%
+  rename(aspect = aspect_EA_YK, cplan = cplan_EA_YK, cprof = cprof_EA_YK, slope = slope_EA_YK)
 )
 ```
 
 ```{r}
-write.csv(saga_onefire, file = "../outputs/PointTerrain/extractTerrainSaga.csv", row.names=FALSE)
+write.csv(df, file = "../outputs/PointTerrain/extractTerrainSagaBasicYK.csv", row.names=FALSE)
 ```
 
-## Terra
-```{r}
-terra_pts = terra::extract(terra_stk, vect(nwt_ea))
-```
 
-```{r}
-(
-terra_onefire <- 
-  nwt_ea %>%
-  #--- define ID ---#
-  mutate(ID := seq_len(nrow(.))) %>% 
-  #--- merge by ID ---#
-  left_join(., terra_pts, by = "ID") %>%
-  #--- drop nas ---#
-  drop_na() %>%
-  #--- drop geometry ---#
-  st_set_geometry(NULL)
-)
-```
-
-```{r}
-write.csv(terra_onefire, file = "../outputs/PointTerrain/extractTerrainTerra.csv", row.names=FALSE)
-```
