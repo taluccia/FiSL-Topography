@@ -28,9 +28,93 @@ field = read.csv("../data/Field/AK_CA_Burned_Plot_Data_1983_2016.csv")
 ```{r}
 head(field)
 ```
+
+# Filtering for smaller groupings to add attribute
 ```{r}
-field %>% dplyr::select(ecoregion_name_l2) %>% unique()
+( ts1_filter = field %>% 
+  filter(ecoregion_name_l2 =="Taiga Shield") %>%
+  filter(longitude > -115)
+)
 ```
+
+```{r}
+cat(paste0(sprintf('"%s"', ts1_filter$project_id), collapse = ", "))
+```
+
+```{r}
+( tstp1_filter = field %>% 
+  filter(ecoregion_name_l2 %in% c("Taiga Shield", "Taiga Plains")) %>%
+  filter(latitude > 64) %>%
+    filter(longitude < -116)
+)
+```
+
+```{r}
+cat(paste0(sprintf('"%s"', tstp1_filter$project_id), collapse = ", "))
+```
+
+```{r}
+( tp1_filter = field %>% 
+  filter(ecoregion_name_l2 %in% c("Taiga Plains")) %>%
+  filter(latitude > 61) %>%
+    filter(longitude < -117.6)
+)
+```
+
+```{r}
+cat(paste0(sprintf('"%s"', tp1_filter$project_id), collapse = ", "))
+```
+
+
+# Add attribute
+
+## Groups
+
+### Group 1
+ For group 1 -> Add state or province for raster extract filter
+
+
+### Group 2
+ For Group 2
+
+```{r}
+bp1 = c("NWT_BCKE.sf.17", "NWT_BCKE.sf.18", "NWT_BCKE.sf.19", "NWT_BCKE.sf.20", "NWT_BCKE.sf.21", "NWT_BCKE.sf.22", "NWT_BCKE.sf.23", "NWT_BCKE.sf.24", "NWT_BCKE.sf.25", "NWT_BCKE.sf.26", "NWT_BCKE.sf.27", "NWT_BCKE.sf.28", "NWT_BCKE.sf.29", "NWT_BCKE.sf.30", "NWT_BCKE.sf.31", "NWT_BCKE.sf.32", "NWT_BCKE.sf.33", "NWT_BCKE.sf.34", "NWT_BCKE.sf.35", "NWT_BCKE.sf.36", "NWT_BCKE.sf.37", "NWT_BCKE.sf.38", "NWT_BCKE.sf.39", "NWT_BCKE.sf.40", "NWT_BCKE.sf.41", "NWT_BCKE.sf.42", "NWT_BCKE.sf.43", "NWT_BCKE.sf.44", "BR_SK1.sf.19", "BR_SK1.sf.20", "BR_SK1.sf.4", "BR_SK1.sf.5", "BR_SK1.sf.6", "BR_SK1.sf.24", "BR_SK1.sf.7", "BR_SK1.sf.8", "BR_SK1.sf.9", "BR_SK1.sf.27", "BR_SK1.sf.10", "BR_SK1.sf.28", "BR_SK1.sf.11", "BR_SK1.sf.29", "BR_SK1.sf.12", "BR_SK1.sf.30", "BR_SK1.sf.13", "BR_SK1.sf.31", "BR_SK1.sf.14", "BR_SK1.sf.32", "BR_SK1.sf.15", "BR_SK1.sf.33", "BR_SK1.sf.16", "BR_SK1.sf.34", "BR_SK1.sf.17", "BR_SK1.sf.35", "BR_SK1.sf.36", "BR_SK1.sf.37", "BR_SK1.sf.38", "BR_SK1.sf.39", "BR_SK1.sf.40", "BR_SK1.sf.41", "BR_SK1.sf.42", "BR_SK1.sf.43", "BR_SK1.sf.44", "BR_SK1.sf.45", "BR_SK1.sf.46", "BR_SK1.sf.47", "BR_SK1.sf.63", "BR_SK1.sf.54", "BR_SK1.sf.55", "BR_SK1.sf.58", "BR_SK1.sf.71", "BR_SK1.sf.73", "BR_SK1.sf.74", "BR_SK1.sf.75", "BR_SK1.sf.76", "BR_SK1.sf.59", "BR_SK1.sf.60", "BR_SK1.sf.61", "BR_SK1.sf.78", "BR_SK1.sf.62", "BR_SK1.sf.79")
+```
+
+```{r}
+ssbp1 = c("SK_RTJ_BR002B", "SK_RTJ_BR003B", "SK_RTJ_BR004C", "SK_RTJ_BR005C", "SK_RTJ_BR006C", "SK_RTJ_BR007B", "SK_RTJ_BR007C", "SK_RTJ_BR008C", "SK_RTJ_BR009C", "SK_RTJ_BR010B", "SK_RTJ_BR010C", "SK_RTJ_BR011B", "SK_RTJ_BR011C", "SK_RTJ_BR012B", "SK_RTJ_BR012C", "SK_RTJ_BR013B", "SK_RTJ_BR013C", "SK_RTJ_BR014B", "SK_RTJ_BR014C", "SK_RTJ_BR015B", "SK_RTJ_BR015C", "SK_RTJ_BR016B", "SK_RTJ_BR016C", "SK_RTJ_BR017B", "SK_RTJ_BR017C", "SK_RTJ_BR018B", "SK_RTJ_BR019B", "SK_RTJ_BR020B", "SK_RTJ_BR021B", "SK_RTJ_BR022B", "SK_RTJ_BR023B", "SK_RTJ_BR024B", "SK_RTJ_BR025B", "SK_RTJ_BR026B", "SK_RTJ_BR027B", "SK_RTJ_BR028B", "SK_RTJ_BR029B", "SK_RTJ_BR030B", "SK_RTJ_JJ001B", "SK_RTJ_JJ014C", "SK_RTJ_JJ015C", "SK_RTJ_JJ019C")
+```
+
+```{r}
+ss1 = c("BR_SK1.sf.1", "BR_SK1.sf.2", "BR_SK1.sf.3", "BR_SK1.sf.18", "BR_SK1.sf.21", "BR_SK1.sf.22", "BR_SK1.sf.23", "BR_SK1.sf.25", "BR_SK1.sf.26", "BR_SK1.sf.48",  "BR_SK1.sf.49", "BR_SK1.sf.50", "BR_SK1.sf.51", "BR_SK1.sf.52", "BR_SK1.sf.53", "BR_SK1.sf.64", "BR_SK1.sf.65", "BR_SK1.sf.67", "BR_SK1.sf.68", "BR_SK1.sf.69")
+
+ss2 = c("BR_SK1.sf.56", "BR_SK1.sf.57",  "BR_SK1.sf.70", "BR_SK1.sf.72", "BR_SK1.sf.77" )
+```
+
+```{r}
+ts1 = c("NWT.sf.58", "NWT.sf.59", "NWT.sf.60", "NWT.sf.61", "NWT.sf.62", "NWT.sf.63", "NWT.sf.64", "NWT.sf.65", "NWT.sf.66", "NWT.sf.67", "NWT.sf.68", "NWT.sf.69", "NWT.sf.70", "NWT.sf.71", "NWT.sf.72", "NWT.sf.73", "NWT.sf.74", "NWT.sf.75", "NWT.sf.102", "NWT.sf.103", "NWT.sf.135", "NWT.sf.136", "NWT.sf.137", "NWT.sf.138", "NWT.sf.139", "NWT.sf.140", "NWT.sf.141", "NWT.sf.142", "NWT.sf.143", "NWT.sf.144", "NWT.sf.145", "NWT.sf.146", "NWT.sf.147", "NWT.sf.148", "NWT.sf.149", "NWT.sf.150", "NWT.sf.151", "NWT.sf.152", "NWT.sf.153", "NWT.sf.154", "NWT.sf.155", "NWT.sf.156", "NWT.sf.157", "NWT.sf.158", "NWT.sf.159", "NWT.sf.160", "NWT.sf.161", "NWT.sf.206", "NWT.sf.207", "NWT.sf.208", "NWT.sf.209", "NWT.sf.210", "NWT.sf.211", "NWT.sf.212", "NWT.sf.213", "NWT.sf.214", "NWT.sf.215", "NWT.sf.216", "NWT.sf.217", "NWT.sf.218", "NWT.sf.219", "NWT.sf.220", "NWT.sf.221", "NWT.sf.222", "NWT.sf.223", "NWT.sf.224", "NWT.sf.225", "NWT.sf.226", "NWT.sf.227", "NWT.sf.228", "NWT.sf.229", "NWT.sf.230", "NWT.sf.231", "NWT.sf.232", "NWT.sf.233", "NWT.sf.234", "NWT.sf.235", "NWT.sf.236", "NWT.sf.237", "NWT.sf.238", "NWT.sf.239", "NWT.sf.240", "NWT.sf.241", "NWT_BCKE.sf.148", "NWT_BCKE.sf.149", "NWT_BCKE.sf.150", "NWT_BCKE.sf.151", "NWT_BCKE.sf.152", "NWT_BCKE.sf.153", "NWT_BCKE.sf.154", "NWT_BCKE.sf.155", "NWT_BCKE.sf.156", "NWT_BCKE.sf.157", "NWT_BCKE.sf.158", "NWT_BCKE.sf.159", "NWT_BCKE.sf.160", "NWT_BCKE.sf.161", "NWT_BCKE.sf.162", "NWT_BCKE.sf.164", "NWT_BCKE.sf.165", "NWT_BCKE.sf.166", "NWT_BCKE.sf.167", "NWT_BCKE.sf.168", "NWT_BCKE.sf.169", "NWT_BCKE.sf.170", "NWT_BCKE.sf.171", "NWT_BCKE.sf.172", "NWT_BCKE.sf.173", "NWT_BCKE.sf.174", "NWT_BCKE.sf.175", "NWT_BCKE.sf.176", "NWT_BCKE.sf.177", "NWT_BCKE.sf.178", "NWT_BCKE.sf.179", "NWT_BCKE.sf.180", "NWT_BCKE.sf.181", "NWT_BCKE.sf.182", "NWT_BCKE.sf.183", "NWT_BCKE.sf.184", "NWT_BCKE.sf.185", "NWT_BCKE.sf.186", "NWT_BCKE.sf.187", "NWT_BCKE.sf.188", "NWT_BCKE.sf.189", "NWT_BCKE.sf.190", "NWT_BCKE.sf.191", "NWT_BCKE.sf.192", "NWT_BCKE.sf.193", "NWT_BCKE.sf.194", "NWT_BCKE.sf.195", "NWT_BCKE.sf.196", "NWT_BCKE.sf.197", "NWT_BCKE.sf.198", "NWT_BCKE.sf.199", "NWT_BCKE.sf.200", "NWT_BCKE.sf.201", "NWT_BCKE.sf.202", "NWT_BCKE.sf.203", "NWT_BCKE.sf.204", "NWT_BCKE.sf.205", "NWT_BCKE.sf.206", "NWT_BCKE.sf.207", "NWT_BCKE.sf.208", "NWT_BCKE.sf.209", "NWT_BCKE.sf.210", "NWT_BCKE.sf.211", "NWT_BCKE.sf.212", "NWT_BCKE.sf.213", "NWT_BCKE.sf.214", "NWT_BCKE.sf.216", "NWT_BCKE.sf.217", "NWT_BCKE.sf.218", "NWT_BCKE.sf.219", "NWT_BCKE.sf.220", "NWT_BCKE.sf.221", "NWT_BCKE.sf.222", "NWT_BCKE.sf.223", "NWT_BCKE.sf.224", "NWT_BCKE.sf.225", "NWT_BCKE.sf.226", "NWT_BCKE.sf.227", "NWT_BCKE.sf.228", "NWT_BCKE.sf.229")
+```
+
+```{r}
+tstp1 = c("NWT.sf.93", "NWT.sf.94", "NWT.sf.95", "NWT.sf.242", "NWT.sf.243", "NWT.sf.244", "NWT.sf.245", "NWT.sf.246", "NWT.sf.247", "NWT.sf.248", "NWT.sf.249", "NWT.sf.250", "NWT.sf.251", "NWT.sf.252", "NWT.sf.253", "NWT.sf.254", "NWT.sf.255", "NWT.sf.256", "NWT.sf.257", "NWT.sf.258", "NWT.sf.259", "NWT.sf.260", "NWT.sf.261", "NWT.sf.262", "NWT.sf.263", "NWT.sf.264", "NWT.sf.265", "NWT.sf.266", "NWT.sf.267", "NWT.sf.268", "NWT.sf.269", "NWT.sf.270", "NWT.sf.271", "NWT.sf.272", "NWT.sf.273", "NWT.sf.274", "NWT.sf.275", "NWT.sf.276", "NWT.sf.277", "NWT.sf.278", "NWT.sf.279", "NWT.sf.280", "NWT.sf.281", "NWT.sf.282", "NWT.sf.283", "NWT.sf.284", "NWT.sf.285", "NWT.sf.286", "NWT.sf.287", "NWT.sf.288", "NWT.sf.289", "NWT.sf.290", "NWT.sf.291", "NWT.sf.292", "NWT.sf.293", "NWT.sf.294", "NWT.sf.295")
+```
+
+```{r}
+tp1 = c("NWT.sf.2", "NWT.sf.3", "NWT.sf.4", "NWT.sf.5", "NWT.sf.6", "NWT.sf.7", "NWT.sf.8", "NWT.sf.9", "NWT.sf.10", "NWT.sf.11", "NWT.sf.12", "NWT.sf.13", "NWT.sf.14", "NWT.sf.15", "NWT.sf.16", "NWT.sf.92", "NWT.sf.99", "NWT.sf.104", "NWT.sf.105", "NWT.sf.106", "NWT.sf.107", "NWT_BCKE.sf.137", "NWT_BCKE.sf.138", "NWT_BCKE.sf.139", "NWT_BCKE.sf.140", "NWT_BCKE.sf.141", "NWT_BCKE.sf.142", "NWT_BCKE.sf.143", "NWT_BCKE.sf.144", "NWT_BCKE.sf.145", "NWT_BCKE.sf.146", "NWT_BCKE.sf.147")
+```
+
+## Add attributes
+```{r}
+( field1 = field %>% 
+    mutate(group1 = ifelse(ecoregion_name_l2 == "Alaska Boreal Interior", "AK",
+                    ifelse(ecoregion_name_l2 == "Boreal Cordillera", "YK",
+                    ifelse(ecoregion_name_l2 %in% c("Taiga Plains", "Taiga Shield"), "NWT",
+                    ifelse(ecoregion_name_l2 %in% c("Boreal Plains", "Softwood Shield"), "SK", "NA"))))) %>%
+    mutate(group2 = 1)
+)
+```
+
+
 
 # Filter by region
 
@@ -50,6 +134,45 @@ sk_field = field %>% filter(ecoregion_name_l2 %in% c("Boreal Plains", "Softwood 
 sk_field
 ```
 
+# Write to csv
+```{r eval=FALSE, include=FALSE}
+write.csv(nwt_field, "../outputs/FieldCSV/Field1983-2016/nwt_field.csv", row.names=FALSE)
+write.csv(ak_field, "../outputs/FieldCSV/Field1983-2016/ak_field.csv", row.names=FALSE)
+write.csv(sk_field, "../outputs/FieldCSV/Field1983-2016/sk_field.csv", row.names=FALSE)
+```
+
+
+# Convert to point shapefile with WGS 84 
+## All field p to points
+
+```{r}
+(
+  all_field = field %>%
+    dplyr::select(project_id:longitude, moisture) %>%
+    rename(proj_name = project_name, ecoregion = ecoregion_name_l2) %>%
+    st_as_sf(.,coords=c("longitude", "latitude"),crs=4326)
+)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+st_write(all_field, "../outputs/FieldPoints/Field1983-2016/AllPoints1983-2016.shp", driver="ESRI Shapefile")
+```
+
+
+
+# All field to Equal area
+
+```{r}
+all_field_ea = st_transform(all_field, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs")
+```
+
+```{r eval=FALSE, include=FALSE}
+st_write(all_field_ea, "../outputs/FieldPoints/Field1983-2016/AllPointsEA1983-2016.shp", driver="ESRI Shapefile")
+```
+
+
+# Extra ?DELETE?
 ```{r}
 nwt_plains = field %>% filter(ecoregion_name_l2 == "Taiga Plains")
 nwt_shield = field %>% filter(ecoregion_name_l2 == "Taiga Shield")
@@ -157,33 +280,7 @@ nwt_shield %>%
 
 
 
-# Write to csv
-```{r eval=FALSE, include=FALSE}
-write.csv(nwt_field, "../outputs/FieldCSV/Field1983-2016/nwt_field.csv", row.names=FALSE)
-write.csv(ak_field, "../outputs/FieldCSV/Field1983-2016/ak_field.csv", row.names=FALSE)
-write.csv(sk_field, "../outputs/FieldCSV/Field1983-2016/sk_field.csv", row.names=FALSE)
-```
 
-```{r eval=FALSE, include=FALSE}
-write.csv(nwt_shield, "../outputs/FieldCSV/Field1983-2016/nwt_shield.csv", row.names=FALSE)
-```
-
-# Convert to point shapefile with WGS 84 
-## All field p to points
-
-```{r}
-(
-  all_field = field %>%
-    dplyr::select(project_id:longitude, moisture) %>%
-    rename(proj_name = project_name, ecoregion = ecoregion_name_l2) %>%
-    st_as_sf(.,coords=c("longitude", "latitude"),crs=4326)
-)
-```
-
-
-```{r eval=FALSE, include=FALSE}
-st_write(all_field, "../outputs/FieldPoints/Field1983-2016/AllPoints1983-2016.shp", driver="ESRI Shapefile")
-```
 
 ## SK
 ```{r}

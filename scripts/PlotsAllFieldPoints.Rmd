@@ -5,7 +5,7 @@ date: "2023-03-08"
 output: html_document
 ---
 
-`# Overview
+# Overview
 
 plot points
 
@@ -20,17 +20,17 @@ library(tidyverse)
 
 
 ```{r}
-points = read.csv("../data/PointTerrain/AllFieldTWI.csv")
+geeTwi = read.csv("../data/PointTerrain/AllFieldTWI.csv")
 ```
 
 # Look at the table
 ```{r}
-head(points)
+head(geeTwi)
 ```
 # Dropp -9999
 ```{r}
 (
-  points1 = points %>%
+  geeTwi1 = geeTwi %>%
     filter(moisture != -9999)
 )
 ```
@@ -38,7 +38,7 @@ head(points)
 # Figures
 ```{r}
 (
-  g1_twi = ggplot(data = points1, aes(x=as.character(moisture), y=twi)) +
+  g1_twi = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
     geom_boxplot() +
     geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
     labs(x="Soil moisture", 
@@ -55,7 +55,7 @@ ggsave("../figures/Boxplots/AllFieldTWI.jpeg", plot = g1_twi,  dpi = 300)
 # Figures
 ```{r}
 (
-  g2_twi = ggplot(data = points1, aes(x=as.character(moisture), y=twi)) +
+  g2_twi = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
     geom_boxplot() +
     geom_jitter(color="black", size=0.4, alpha=0.9) +
     facet_wrap(~ecoregion) +
