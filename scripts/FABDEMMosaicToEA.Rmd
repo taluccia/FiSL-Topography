@@ -35,6 +35,7 @@ Longitude (W)
 library(terra)
 library(gdalUtilities)
 library(sf)
+library(ggspatial)
 ```
 
 
@@ -42,17 +43,23 @@ library(sf)
 
 ## Points
 ```{r}
-pts = st_read("../data/FieldPoints/Field1983-2016/SKPoints1983-2016.shp", "SKPoints1983-2016") 
+pts = st_read("../data/FieldPoints/Field1983-2016/AllPointsEA1983-2016.shp", "AllPointsEA1983-2016") 
 ```
 
-```{r}
-head(pts)
-```
+## Filter for groups 2
 
 ```{r}
-pt_shield = pts %>% filter(ecoregion =="Softwood Shield") 
-pt_plains = pts %>% filter(ecoregion =="Boreal Plains") 
+( ss1 = pts %>% filter(group2 =="ss1") )
+ss2 = pts %>% filter(group2 =="ss2")
+ssbp1 = pts %>% filter(group2 =="ssbp1")
+ssbp2 = pts %>% filter(group2 =="ssbp2")
+ts1 = pts %>% filter(group2 =="ts1")
+tstp1 = pts %>% filter(group2 =="tstp1")
+tp1 = pts %>% filter(group2 =="tp1")
+tp2 = pts %>% filter(group2 =="tp2")
+tp3 = pts %>% filter(group2 =="tp3")
 ```
+
 
 ## Look at 1st and last sk raster
 ```{r}
@@ -103,8 +110,8 @@ yk_ea = project(yk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0
 ```
 
 ### Save Raster Mosaic
-```{r eval=FALSE, include=FALSE}
-writeRaster(yk_m, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif")
+```{r}
+writeRaster(yk_ea, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif", overwrite = TRUE)
 ```
 
 ## Alaska
@@ -134,14 +141,15 @@ ak_ea = project(ak_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0
 ```
 
 ### Save Raster Mosaic
-```{r eval=FALSE, include=FALSE}
-writeRaster(ak_m, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif")
+```{r}
+writeRaster(ak_ea, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif", overwrite = TRUE)
 ```
 
 ## NWT
 ### Make list of rasters
 ```{r}
 nwt_rlist <- list.files(path ="../data/DEMs/DEMFieldNWT/",pattern = ".tif$",full.names = TRUE )
+nwt_rlist
 ```
 
 ## Define as rasters
@@ -165,14 +173,15 @@ nwt_ea = project(nwt_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0
 ```
 
 ### Save Raster Mosaic
-```{r eval=FALSE, include=FALSE}
-writeRaster(nwt_m, filename="../outputs/FieldDEM/FABDEM_EA_NWT.tif")
+```{r}
+writeRaster(nwt_ea, filename="../outputs/FieldDEM/FABDEM_EA_NWT.tif", overwrite = TRUE)
 ```
 
-## Sk
+## SK
 ### Make list of rasters
 ```{r}
 sk_rlist <- list.files(path ="../data/DEMs/DEMFieldSK/",pattern = ".tif$",full.names = TRUE )
+sk_rlist
 ```
 
 ## Define as rasters
@@ -196,28 +205,253 @@ sk_ea = project(sk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0
 ```
 
 ### Save Raster Mosaic
-```{r eval=FALSE, include=FALSE}
-writeRaster(sk_m, filename="../outputs/FieldDEM/FABDEM_EA_SK.tif")
+```{r}
+writeRaster(sk_ea, filename="../outputs/FieldDEM/FABDEM_EA_SK.tif", overwrite = TRUE)
 ```
 
-# Plot DEM
 
-```{r eval=FALSE, include=FALSE}
-plot(sk_m)
-plot(st_geometry(points), add=TRUE)
+# Small Subgroups
+use group 2
+
+## SS1
+```{r}
+r_ss1 = sk_r[c(1:2)]
 ```
 
-```{r eval=FALSE, include=FALSE}
-plot(nwt_m)
-plot(st_geometry(points), add=TRUE)
+
+#### Make a spatial raster collection
+```{r}
+ss1_rsrc <- sprc(r_ss1)
 ```
 
-```{r eval=FALSE, include=FALSE}
-plot(ak_m)
-plot(st_geometry(points), add=TRUE)
+####  Mosaic
+```{r}
+ss1_m <- mosaic(ss1_rsrc)
 ```
 
+#### Reproject to Equal area
+```{r}
+ss1_ea = project(ss1_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
 ```{r eval=FALSE, include=FALSE}
-plot(yk_m)
-plot(st_geometry(points), add=TRUE)
+writeRaster(ss1_ea, filename="../outputs/FieldDEM/FABDEM_EA_ss1.tif", overwrite=TRUE)
+```
+
+
+## SS2
+Lat 55-56 long -98--97
+```{r}
+r_ss2 = sk_r[c(60:62, 85:87)]
+```
+
+#### Make a spatial raster collection
+```{r}
+ss2_rsrc <- sprc(r_ss2)
+```
+
+####  Mosaic
+```{r}
+ss2_m <- mosaic(ss2_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+ss2_ea = project(ss2_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(ss2_ea, filename="../outputs/FieldDEM/FABDEM_EA_ss2.tif", overwrite=TRUE)
+```
+
+## SSBP1
+Lat 55-58 long 112-108
+```{r}
+r_ssbp1 = sk_r[c(97:100, 120:123)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+ssbp1_rsrc <- sprc(r_ssbp1)
+```
+
+####  Mosaic
+```{r}
+ssbp1_m <- mosaic(ssbp1_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+ssbp1_ea = project(ssbp1_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(ssbp1_ea, filename="../outputs/FieldDEM/FABDEM_EA_ssbp1.tif", overwrite=TRUE)
+```
+
+
+## SSBP 2
+Lat 53-55, lon 104-108
+```{r}
+r_ssbp2 = sk_r[c(17:22, 42:47, 67:72, 92:97)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+ssbp2_rsrc <- sprc(r_ssbp2)
+```
+
+####  Mosaic
+```{r}
+ssbp2_m <- mosaic(ssbp2_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+ssbp2_ea = project(ssbp2_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(ssbp2_ea, filename="../outputs/FieldDEM/FABDEM_EA_ssbp2.tif", overwrite=TRUE)
+```
+
+## TS1
+Lat 62-64, lon 113
+```{r}
+r_ts1 = nwt_r[c(27:29, 39:41, 51:53)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+ts1_rsrc <- sprc(r_ts1)
+```
+
+####  Mosaic
+```{r}
+ts1_m <- mosaic(ts1_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+ts1_ea = project(ts1_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(ts1_ea, filename="../outputs/FieldDEM/FABDEM_EA_ts1.tif", overwrite=TRUE)
+```
+
+## TSTP1
+
+```{r}
+r_tstp1 = nwt_r[c(55:56)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+tstp1_rsrc <- sprc(r_tstp1)
+```
+
+####  Mosaic
+```{r}
+tstp1_m <- mosaic(tstp1_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+tstp1_ea = project(tstp1_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(tstp1_ea, filename="../outputs/FieldDEM/FABDEM_EA_tstp1.tif", overwrite=TRUE)
+```
+
+## TP1
+
+```{r}
+r_tp1 = nwt_r[c(8:12, 20:24)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+tp1_rsrc <- sprc(r_tp1)
+```
+
+####  Mosaic
+```{r}
+tp1_m <- mosaic(tp1_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+tp1_ea = project(tp1_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(tp1_ea, filename="../outputs/FieldDEM/FABDEM_EA_tp1.tif", overwrite=TRUE)
+```
+
+## TP2
+lat 61-62, lon 117-115
+```{r}
+r_tp2 = nwt_r[c(17:20, 29:32)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+tp2_rsrc <- sprc(r_tp2)
+```
+
+####  Mosaic
+```{r}
+tp2_m <- mosaic(tp2_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+tp2_ea = project(tp2_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(tp2_ea, filename="../outputs/FieldDEM/FABDEM_EA_tp2.tif", overwrite=TRUE)
+```
+
+## TP3
+Lat 60, lon 117-114
+```{r}
+r_tp3 = nwt_r[c(4:8, 16:20)]
+```
+
+
+#### Make a spatial raster collection
+```{r}
+tp3_rsrc <- sprc(r_tp3)
+```
+
+####  Mosaic
+```{r}
+tp3_m <- mosaic(tp3_rsrc)
+```
+
+#### Reproject to Equal area
+```{r}
+tp3_ea = project(tp3_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+```
+
+#### Save Raster Mosaic
+```{r eval=FALSE, include=FALSE}
+writeRaster(tp3_ea, filename="../outputs/FieldDEM/FABDEM_EA_tp3.tif", overwrite=TRUE)
 ```
