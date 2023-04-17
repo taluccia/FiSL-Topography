@@ -1,0 +1,127 @@
+---
+title: "CheckDEMMosaicPointOverlay"
+author: "Anna Talucci"
+date: "2023-04-13"
+output: html_document
+---
+
+
+# Overview
+
+Stack and sample geotiffs from RSAGA outputs
+
+# Packages 
+
+```{r}
+library(terra)
+library(gdalUtilities)
+library(sf)
+library(tidyverse)
+```
+
+# Data Points
+
+```{r}
+pts = st_read("../data/FieldPoints/Field1983-2016/AllPointsEA1983-2016.shp", "AllPointsEA1983-2016") 
+```
+```{r}
+pts
+```
+
+## Filter for groups
+
+```{r}
+( ss1 = pts %>% filter(group2 =="ss1") )
+ss2 = pts %>% filter(group2 =="ss2")
+ssbp1 = pts %>% filter(group2 =="ssbp1")
+ssbp2 = pts %>% filter(group2 =="ssbp2")
+ts1 = pts %>% filter(group2 =="ts1")
+tstp1 = pts %>% filter(group2 =="tstp1")
+tp1 = pts %>% filter(group2 =="tp1")
+tp2 = pts %>% filter(group2 =="tp2")
+tp3 = pts %>% filter(group2 =="tp3")
+```
+
+# Rasters
+
+
+```{r}
+subgrouprastlist <- list.files(path = "../outputs/FieldDEM/", pattern='.tif$', all.files= T, full.names= T)
+subgrouprastlist
+```
+filename="../outputs/FieldDEM/FABDEM_EA_SK_ssbp1.tif"
+
+## Define as rasters
+```{r}
+r <- lapply(subgrouprastlist, rast)
+```
+
+
+
+```{r}
+r_ss1 <- terra::rast(r[4])
+r_ss2 <- terra::rast(r[5])
+r_ssbp1 <- terra::rast(r[6])
+r_ssbp2 <- terra::rast(r[7])
+r_tp1 <- terra::rast(r[8])
+r_tp2 <- terra::rast(r[9])
+r_tp3 <- terra::rast(r[10])
+r_ts1 <- terra::rast(r[11])
+r_tstp1 <- terra::rast(r[12])
+```
+
+# Plot DEM
+
+## SS1
+```{r}
+plot(r_ss1)
+plot(st_geometry(ss1), add=TRUE)
+```
+
+## SS2
+```{r}
+plot(r_ss2)
+plot(st_geometry(ss2), add=TRUE)
+```
+
+## SSBP1
+```{r}
+plot(r_ssbp1)
+plot(st_geometry(ssbp1), add=TRUE)
+```
+
+## SSBP2
+```{r}
+plot(r_ssbp2)
+plot(st_geometry(ssbp2), add=TRUE)
+```
+
+## TP1
+```{r}
+plot(r_tp1)
+plot(st_geometry(tp1), add=TRUE)
+```
+
+## TP2
+```{r}
+plot(r_tp2)
+plot(st_geometry(tp2), add=TRUE)
+```
+
+## TP3
+```{r}
+plot(r_tp3)
+plot(st_geometry(tp3), add=TRUE)
+```
+
+## TS1
+```{r}
+plot(r_ts1)
+plot(st_geometry(ts1), add=TRUE)
+```
+
+## TSTP1
+```{r}
+plot(r_tstp1)
+plot(st_geometry(tstp1), add=TRUE)
+```
