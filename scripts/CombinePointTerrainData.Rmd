@@ -1,0 +1,33 @@
+---
+title: "Combine Terrain Point Data"
+author: "Anna Talucci"
+date: "2023-04-17"
+output: html_document
+---
+
+# Overview
+This script takes the extract raster values at point location that are in csv format and binds and joins into a single dataframe. 
+
+
+# Packages
+```{r}
+library(tidyverse)
+```
+
+# Data
+```{r}
+csvList <- list.files(path = "../data/SagaPointTerrain", pattern='.csv$', all.files= T, full.names= T)
+csvList
+```
+## Select Raster from list
+```{r}
+( 
+  basicDf <- read_csv(csvList[2:5]) %>% bind_rows()
+)
+```
+
+```{r}
+( 
+  swilDf <- read_csv(csvList[6:12]) %>% bind_rows()
+)
+```
