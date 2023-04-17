@@ -7,14 +7,18 @@ Calculate multiple terrain variables to evaluate roll in burn severity for FiSL 
 Moisture gradient are important predictors of burn severity in Boreal forests that have more simple topographic features compared to sub alpine forests. 
 
 # Essential scripts
+* FieldDataOrganize.Rmd 
 * ExploreFieldPoints.Rmd
 * FABDEMMosaicToEA.Rmd
-* GEoTiffToASCii.Rmd
+* CheckDEMMosaicPointOverlay.Rmd
+* GeoTiffToASCii.Rmd
 
 # Notes on Steps
-1. ExploreFieldPoints.Rmd -> use to figure out smaller point groupings for DEM Mosaics to use in SAGA
+1. FieldDataOrganize.Rmd -> organize field data and convert to point shapefile
+2. ExploreFieldPoints.Rmd -> use to figure out smaller point groupings for DEM Mosaics to use in SAGA
 2. FABDEMMosaicToEA.Rmd -> Combine FAB DEMs for each study area
-3. GEoTiffToASCii.Rmd -> convert geotiffs to ascii files for processing in SAGA
+3. CheckDEMMosaicPointOverlay.Rmd -> Overlay points with rasters to make sure subgroups align
+3. GeoTiffToASCii.Rmd -> convert geotiffs to ascii files for processing in SAGA
 
 
 
