@@ -33,51 +33,53 @@ pts
 ## Filter for groups
 
 ```{r}
-( yk = pts %>% filter(group1 =="YK") )
+( grouped_pts = pts %>% filter(group1 =="YK") )
 ```
 
 # Rasters
 
+## Make list from folder
 ```{r}
-rastlist <- list.files(path = "../data/SagaGeotiffs/yk", pattern='.tif$', all.files= T, full.names= T)
+rastlist <- list.files(path = "../data/SagaGeotiffs/swil", pattern='.tif$', all.files= T, full.names= T)
 rastlist
 ```
+## Select Raster from list
 ```{r}
-rast(rastlist[5])
+rast(rastlist[14])
 ```
-
-
-
-
+## Read as raster
+This can create a stack or read a single raster depending on how many are listed.
 ```{r}
-raststk <- terra::rast(rastlist[5:8])
+raststk <- terra::rast(rastlist[14])
 ```
 
 ```{r}
 raststk
 ```
-
+## Extract point values
 ```{r}
-extractPts = terra::extract(raststk,yk)
+extractPts = terra::extract(raststk, grouped_pts)
 ```
 
+## Join extract point values back to the point attribute table
+Notes: For basic terrain add this line of code after `st_set_geometry(NULL)`, `%>% rename(aspect = aspect_EA_YK, cplan = cplan_EA_YK, cprof = cprof_EA_YK, slope = slope_EA_YK)`. If processing swil sub groups (group 2) use this line of code after `st_set_geometry(NULL)`, `%>% rename(swil = )`
 ```{r}
 (
 df <- 
-  yk %>%
+  grouped_pts %>%
   #--- define ID ---#
   mutate(ID := seq_len(nrow(.))) %>% 
   #--- merge by ID ---#
   left_join(., extractPts, by = "ID") %>%
   
   #--- drop geometry ---#
-  st_set_geometry(NULL) %>%
-  rename(aspect = aspect_EA_YK, cplan = cplan_EA_YK, cprof = cprof_EA_YK, slope = slope_EA_YK)
+  st_set_geometry(NULL) %>% 
+  rename(swil = SWIL_EA_YK )
 )
 ```
 
 ```{r}
-write.csv(df, file = "../outputs/PointTerrain/extractTerrainSagaBasicYK.csv", row.names=FALSE)
+write.csv(df, file = "../outputs/PointTerrain/extractTerrainSagaSwilYK.csv", row.names=FALSE)
 ```
 
 
