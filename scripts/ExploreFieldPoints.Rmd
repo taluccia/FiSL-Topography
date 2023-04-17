@@ -1,0 +1,269 @@
+---
+title: "Explore point locations"
+author: "Anna Talucci"
+date: "2023-04-01"
+output: html_document
+---
+
+# Overview 
+Explore groups for spliting the SK raster in two and the NWT raster in 2
+
+# Packages
+```{r}
+library(tidyverse)
+library(sf)
+library(viridis)
+```
+
+# Data
+
+## Points
+```{r}
+pts = st_read("../data/FieldPoints/Field1983-2016/AllPointsEA1983-2016.shp", "AllPointsEA1983-2016") 
+```
+
+```{r}
+head(pts)
+```
+```{r}
+unique(pts$ecoregion)
+```
+```{r}
+( ss= pts %>% filter(ecoregion =="Softwood Shield") )
+( sp = pts %>% filter(ecoregion =="Boreal Plains") )
+```
+
+
+
+
+```{r}
+ggplot() +  
+  geom_sf(data=pt_shield, color = "red") +
+  geom_sf(data=pt_plains, color = "blue") +
+  coord_sf() +
+  theme(legend.position="bottom")
+
+```
+```{r}
+ggplot() +  
+  geom_sf(data=pt_shield, aes(colour=burn_year)) +
+  geom_sf(data=pt_plains, aes(colour=burn_year)) +
+  coord_sf() +
+  theme(legend.position="bottom")
+
+```
+# SK
+```{r}
+( ss= pts %>% filter(ecoregion =="Softwood Shield") )
+( sp = pts %>% filter(ecoregion =="Boreal Plains") )
+```
+
+```{r}
+pts %>% 
+  filter(ecoregion %in% c("Softwood Shield", "Boreal Plains")) %>%
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() 
+  
+```
+## SS1
+```{r}
+ss1 = c("BDG.sf.39", "BDG.sf.40", "BDG.sf.41", "BDG.sf.42", "BDG.sf.43", "BDG.sf.44", "BDG.sf.45", "BDG.sf.46", "BDG.sf.47")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% ss1) %>%
+  ggplot() +
+  geom_sf(aes(colour=project_id)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+## SS2
+```{r}
+ss2 = c("BDG.sf.1", "BDG.sf.2", "BDG.sf.3", "BDG.sf.4", "BDG.sf.50", "BDG.sf.51", "BDG.sf.52", "BDG.sf.53", "BDG.sf.54", "BDG.sf.55", "BDG.sf.56", "BDG.sf.57", "BDG.sf.58", "BDG.sf.59", "BDG.sf.60", "BDG.sf.61", "BDG.sf.62", "BDG.sf.63", "BDG.sf.64", "BDG.sf.65", "BDG.sf.66", "BDG.sf.67", "BDG.sf.68", "BDG.sf.69")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% ss2) %>%
+  ggplot() +
+  geom_sf(aes(colour=project_id)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+## SSBP1
+```{r}
+ssbp1 = c("NWT_BCKE.sf.17", "NWT_BCKE.sf.18", "NWT_BCKE.sf.19", "NWT_BCKE.sf.20", "NWT_BCKE.sf.21", "NWT_BCKE.sf.22", "NWT_BCKE.sf.23", "NWT_BCKE.sf.24", "NWT_BCKE.sf.25", "NWT_BCKE.sf.26", "NWT_BCKE.sf.27", "NWT_BCKE.sf.28", "NWT_BCKE.sf.29", "NWT_BCKE.sf.30", "NWT_BCKE.sf.31", "NWT_BCKE.sf.32", "NWT_BCKE.sf.33", "NWT_BCKE.sf.34", "NWT_BCKE.sf.35", "NWT_BCKE.sf.36", "NWT_BCKE.sf.37", "NWT_BCKE.sf.38", "NWT_BCKE.sf.39", "NWT_BCKE.sf.40", "NWT_BCKE.sf.41", "NWT_BCKE.sf.42", "NWT_BCKE.sf.43", "NWT_BCKE.sf.44", "BR_SK1.sf.54", "BR_SK1.sf.55", "BR_SK1.sf.56", "BR_SK1.sf.57", "BR_SK1.sf.70", "BR_SK1.sf.58", "BR_SK1.sf.71", "BR_SK1.sf.72", "BR_SK1.sf.73", "BR_SK1.sf.74", "BR_SK1.sf.75", "BR_SK1.sf.76", "BR_SK1.sf.59", "BR_SK1.sf.77", "BR_SK1.sf.60", "BR_SK1.sf.61", "BR_SK1.sf.78", "BR_SK1.sf.62", "BR_SK1.sf.79")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% ssbp1) %>%
+  ggplot() +
+  geom_sf(aes(colour=project_id)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+## SSBP2
+```{r}
+ssbp2 = c("BDG.sf.32", "BDG.sf.33", "BDG.sf.34", "BDG.sf.35", "BDG.sf.36", "BDG.sf.37", "BDG.sf.38", "BDG.sf.48", "BDG.sf.49", "BR_SK1.sf.18", "BR_SK1.sf.1", "BR_SK1.sf.19", "BR_SK1.sf.2", "BR_SK1.sf.20", "BR_SK1.sf.3", "BR_SK1.sf.21", "BR_SK1.sf.4", "BR_SK1.sf.22", "BR_SK1.sf.5", "BR_SK1.sf.23", "BR_SK1.sf.6", "BR_SK1.sf.24", "BR_SK1.sf.7", "BR_SK1.sf.25", "BR_SK1.sf.8", "BR_SK1.sf.26", "BR_SK1.sf.9", "BR_SK1.sf.27", "BR_SK1.sf.10", "BR_SK1.sf.28", "BR_SK1.sf.11", "BR_SK1.sf.29", "BR_SK1.sf.12", "BR_SK1.sf.30", "BR_SK1.sf.13", "BR_SK1.sf.31", "BR_SK1.sf.14", "BR_SK1.sf.32", "BR_SK1.sf.15", "BR_SK1.sf.33", "BR_SK1.sf.16", "BR_SK1.sf.34", "BR_SK1.sf.17", "BR_SK1.sf.35", "BR_SK1.sf.36", "BR_SK1.sf.37", "BR_SK1.sf.38", "BR_SK1.sf.39", "BR_SK1.sf.40", "BR_SK1.sf.41", "BR_SK1.sf.42", "BR_SK1.sf.43", "BR_SK1.sf.44", "BR_SK1.sf.45", "BR_SK1.sf.46", "BR_SK1.sf.47", "BR_SK1.sf.63", "BR_SK1.sf.64", "BR_SK1.sf.65", "BR_SK1.sf.66", "BR_SK1.sf.48", "BR_SK1.sf.67", "BR_SK1.sf.49", "BR_SK1.sf.50", "BR_SK1.sf.51", "BR_SK1.sf.52", "BR_SK1.sf.53", "BR_SK1.sf.68", "BR_SK1.sf.69")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% ssbp2) %>%
+  ggplot() +
+  geom_sf(aes(colour=project_id)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+
+# NWT
+
+```{r}
+pts %>% 
+  filter(ecoregion %in% c("Taiga Plains", 'Taiga Shield')) %>%
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() 
+  
+```
+
+
+
+## Taiga Shield
+```{r}
+( ts = pts %>% filter(ecoregion =="Taiga Shield") )
+```
+
+```{r}
+ts1 = c("NWT.sf.58", "NWT.sf.59", "NWT.sf.60", "NWT.sf.61", "NWT.sf.62", "NWT.sf.63", "NWT.sf.64", "NWT.sf.65", "NWT.sf.66", "NWT.sf.67", "NWT.sf.68", "NWT.sf.69", "NWT.sf.70", "NWT.sf.71", "NWT.sf.72", "NWT.sf.73", "NWT.sf.74", "NWT.sf.75", "NWT.sf.102", "NWT.sf.103", "NWT.sf.135", "NWT.sf.136", "NWT.sf.137", "NWT.sf.138", "NWT.sf.139", "NWT.sf.140", "NWT.sf.141", "NWT.sf.142", "NWT.sf.143", "NWT.sf.144", "NWT.sf.145", "NWT.sf.146", "NWT.sf.147", "NWT.sf.148", "NWT.sf.149", "NWT.sf.150", "NWT.sf.151", "NWT.sf.152", "NWT.sf.153", "NWT.sf.154", "NWT.sf.155", "NWT.sf.156", "NWT.sf.157", "NWT.sf.158", "NWT.sf.159", "NWT.sf.160", "NWT.sf.161", "NWT.sf.206", "NWT.sf.207", "NWT.sf.208", "NWT.sf.209", "NWT.sf.210", "NWT.sf.211", "NWT.sf.212", "NWT.sf.213", "NWT.sf.214", "NWT.sf.215", "NWT.sf.216", "NWT.sf.217", "NWT.sf.218", "NWT.sf.219", "NWT.sf.220", "NWT.sf.221", "NWT.sf.222", "NWT.sf.223", "NWT.sf.224", "NWT.sf.225", "NWT.sf.226", "NWT.sf.227", "NWT.sf.228", "NWT.sf.229", "NWT.sf.230", "NWT.sf.231", "NWT.sf.232", "NWT.sf.233", "NWT.sf.234", "NWT.sf.235", "NWT.sf.236", "NWT.sf.237", "NWT.sf.238", "NWT.sf.239", "NWT.sf.240", "NWT.sf.241", "NWT_BCKE.sf.148", "NWT_BCKE.sf.149", "NWT_BCKE.sf.150", "NWT_BCKE.sf.151", "NWT_BCKE.sf.152", "NWT_BCKE.sf.153", "NWT_BCKE.sf.154", "NWT_BCKE.sf.155", "NWT_BCKE.sf.156", "NWT_BCKE.sf.157", "NWT_BCKE.sf.158", "NWT_BCKE.sf.159", "NWT_BCKE.sf.160", "NWT_BCKE.sf.161", "NWT_BCKE.sf.162", "NWT_BCKE.sf.164", "NWT_BCKE.sf.165", "NWT_BCKE.sf.166", "NWT_BCKE.sf.167", "NWT_BCKE.sf.168", "NWT_BCKE.sf.169", "NWT_BCKE.sf.170", "NWT_BCKE.sf.171", "NWT_BCKE.sf.172", "NWT_BCKE.sf.173", "NWT_BCKE.sf.174", "NWT_BCKE.sf.175", "NWT_BCKE.sf.176", "NWT_BCKE.sf.177", "NWT_BCKE.sf.178", "NWT_BCKE.sf.179", "NWT_BCKE.sf.180", "NWT_BCKE.sf.181", "NWT_BCKE.sf.182", "NWT_BCKE.sf.183", "NWT_BCKE.sf.184", "NWT_BCKE.sf.185", "NWT_BCKE.sf.186", "NWT_BCKE.sf.187", "NWT_BCKE.sf.188", "NWT_BCKE.sf.189", "NWT_BCKE.sf.190", "NWT_BCKE.sf.191", "NWT_BCKE.sf.192", "NWT_BCKE.sf.193", "NWT_BCKE.sf.194", "NWT_BCKE.sf.195", "NWT_BCKE.sf.196", "NWT_BCKE.sf.197", "NWT_BCKE.sf.198", "NWT_BCKE.sf.199", "NWT_BCKE.sf.200", "NWT_BCKE.sf.201", "NWT_BCKE.sf.202", "NWT_BCKE.sf.203", "NWT_BCKE.sf.204", "NWT_BCKE.sf.205", "NWT_BCKE.sf.206", "NWT_BCKE.sf.207", "NWT_BCKE.sf.208", "NWT_BCKE.sf.209", "NWT_BCKE.sf.210", "NWT_BCKE.sf.211", "NWT_BCKE.sf.212", "NWT_BCKE.sf.213", "NWT_BCKE.sf.214", "NWT_BCKE.sf.216", "NWT_BCKE.sf.217", "NWT_BCKE.sf.218", "NWT_BCKE.sf.219", "NWT_BCKE.sf.220", "NWT_BCKE.sf.221", "NWT_BCKE.sf.222", "NWT_BCKE.sf.223", "NWT_BCKE.sf.224", "NWT_BCKE.sf.225", "NWT_BCKE.sf.226", "NWT_BCKE.sf.227", "NWT_BCKE.sf.228", "NWT_BCKE.sf.229")
+```
+
+
+
+```{r}
+pts %>% 
+  filter(project_id %in% ts1) %>%
+  ggplot() +
+  geom_sf(aes(colour=project_id)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+```{r}
+tstp1 = c("NWT.sf.93", "NWT.sf.94", "NWT.sf.95", "NWT.sf.242", "NWT.sf.243", "NWT.sf.244", "NWT.sf.245", "NWT.sf.246", "NWT.sf.247", "NWT.sf.248", "NWT.sf.249", "NWT.sf.250", "NWT.sf.251", "NWT.sf.252", "NWT.sf.253", "NWT.sf.254", "NWT.sf.255", "NWT.sf.256", "NWT.sf.257", "NWT.sf.258", "NWT.sf.259", "NWT.sf.260", "NWT.sf.261", "NWT.sf.262", "NWT.sf.263", "NWT.sf.264", "NWT.sf.265", "NWT.sf.266", "NWT.sf.267", "NWT.sf.268", "NWT.sf.269", "NWT.sf.270", "NWT.sf.271", "NWT.sf.272", "NWT.sf.273", "NWT.sf.274", "NWT.sf.275", "NWT.sf.276", "NWT.sf.277", "NWT.sf.278", "NWT.sf.279", "NWT.sf.280", "NWT.sf.281", "NWT.sf.282", "NWT.sf.283", "NWT.sf.284", "NWT.sf.285", "NWT.sf.286", "NWT.sf.287", "NWT.sf.288", "NWT.sf.289", "NWT.sf.290", "NWT.sf.291", "NWT.sf.292", "NWT.sf.293", "NWT.sf.294", "NWT.sf.295")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% tstp1) %>%
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+
+## Taiga Plains
+```{r}
+( tp1 = pts %>% filter(group2 =="tp1") )
+```
+
+
+### TP1
+```{r}
+tp1 %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+### TP2
+```{r}
+tp2 = c("NWT_BCKE.sf.1", "NWT_BCKE.sf.2", "NWT_BCKE.sf.3", "NWT_BCKE.sf.4", "NWT_BCKE.sf.5", "NWT_BCKE.sf.6", "NWT.sf.19", "NWT.sf.20", "NWT.sf.21", "NWT.sf.22", "NWT.sf.23", "NWT.sf.24", "NWT.sf.25", "NWT.sf.26", "NWT.sf.27", "NWT.sf.28", "NWT.sf.29", "NWT.sf.30", "NWT.sf.31", "NWT.sf.32", "NWT.sf.33", "NWT.sf.34", "NWT.sf.35", "NWT.sf.36", "NWT.sf.37", "NWT.sf.38", "NWT.sf.39", "NWT.sf.40", "NWT.sf.41", "NWT.sf.45", "NWT.sf.82", "NWT.sf.83", "NWT.sf.84", "NWT.sf.85", "NWT.sf.86", "NWT.sf.87", "NWT.sf.88", "NWT.sf.89", "NWT.sf.90", "NWT.sf.96", "NWT.sf.97", "NWT.sf.98", "NWT.sf.162", "NWT.sf.163", "NWT.sf.164", "NWT.sf.165", "NWT.sf.166", "NWT.sf.167", "NWT.sf.168", "NWT.sf.169", "NWT.sf.170", "NWT.sf.171", "NWT.sf.172", "NWT.sf.173", "NWT.sf.174", "NWT.sf.175", "NWT.sf.176", "NWT.sf.177", "NWT.sf.178", "NWT.sf.179", "NWT.sf.180", "NWT.sf.181", "NWT.sf.182", "NWT.sf.183", "NWT.sf.184", "NWT.sf.185", "NWT.sf.186", "NWT.sf.187", "NWT.sf.188", "NWT.sf.189", "NWT.sf.190", "NWT.sf.191", "NWT.sf.192", "NWT.sf.193", "NWT.sf.194", "NWT.sf.195", "NWT.sf.196", "NWT.sf.197", "NWT.sf.198", "NWT.sf.199", "NWT.sf.200", "NWT.sf.201", "NWT.sf.202", "NWT.sf.203", "NWT.sf.204", "NWT.sf.205", "NWT.sf.296", "NWT.sf.297", "NWT.sf.298", "NWT.sf.299", "NWT.sf.300", "NWT.sf.301", "NWT.sf.302", "NWT.sf.303", "NWT.sf.304", "NWT.sf.305", "NWT.sf.306", "NWT.sf.307", "NWT.sf.308", "NWT.sf.309", "NWT.sf.310", "NWT.sf.311", "NWT.sf.312", "NWT.sf.313", "NWT.sf.314", "NWT.sf.315", "NWT.sf.316", "NWT.sf.317", "NWT.sf.318", "NWT.sf.319", "NWT.sf.320", "NWT.sf.321", "NWT.sf.322", "NWT.sf.323", "NWT.sf.324", "NWT.sf.325", "NWT.sf.326", "NWT.sf.327", "NWT.sf.328", "NWT.sf.329", "NWT.sf.330", "NWT.sf.331", "NWT.sf.332", "NWT.sf.333", "NWT.sf.334", "NWT_BCKE.sf.230", "NWT_BCKE.sf.231", "NWT_BCKE.sf.232", "NWT_BCKE.sf.233", "NWT_BCKE.sf.234", "NWT_BCKE.sf.235", "NWT_BCKE.sf.236", "NWT_BCKE.sf.237", "NWT_BCKE.sf.238", "NWT_BCKE.sf.239", "NWT_BCKE.sf.240", "NWT_BCKE.sf.241", "NWT_BCKE.sf.242", "NWT_BCKE.sf.243", "NWT_BCKE.sf.244", "NWT_BCKE.sf.245", "NWT_BCKE.sf.246", "NWT_BCKE.sf.247", "NWT_BCKE.sf.248", "NWT_BCKE.sf.249", "NWT_BCKE.sf.250", "NWT_BCKE.sf.251", "NWT_BCKE.sf.252", "NWT_BCKE.sf.253", "NWT_BCKE.sf.254", "NWT_BCKE.sf.255", "NWT_BCKE.sf.256", "NWT_BCKE.sf.257", "NWT_BCKE.sf.258", "NWT_BCKE.sf.259", "NWT_BCKE.sf.260", "NWT_BCKE.sf.261", "NWT_BCKE.sf.262", "NWT_BCKE.sf.263", "NWT_BCKE.sf.264", "NWT_BCKE.sf.265", "NWT_BCKE.sf.266", "NWT_BCKE.sf.267", "NWT_BCKE.sf.268", "NWT_BCKE.sf.269", "NWT_BCKE.sf.270", "NWT_BCKE.sf.271", "NWT_BCKE.sf.273", "NWT_BCKE.sf.274", "NWT_BCKE.sf.275", "NWT_BCKE.sf.276", "NWT_BCKE.sf.277", "NWT_BCKE.sf.278", "NWT_BCKE.sf.279", "NWT_BCKE.sf.280", "NWT_BCKE.sf.281", "NWT_BCKE.sf.282", "NWT_BCKE.sf.283", "NWT_BCKE.sf.284", "NWT_BCKE.sf.285", "NWT_BCKE.sf.286", "NWT_BCKE.sf.287", "NWT_BCKE.sf.288", "NWT_BCKE.sf.289", "NWT_BCKE.sf.290", "NWT_BCKE.sf.291", "NWT_BCKE.sf.292", "NWT_BCKE.sf.293", "NWT_BCKE.sf.294", "NWT_BCKE.sf.295", "NWT_BCKE.sf.296", "NWT_BCKE.sf.297", "NWT_BCKE.sf.298", "NWT_BCKE.sf.299", "NWT_BCKE.sf.300", "NWT_BCKE.sf.301", "NWT_BCKE.sf.302", "NWT_BCKE.sf.303", "NWT_BCKE.sf.304", "NWT_BCKE.sf.305", "NWT_BCKE.sf.306", "NWT_BCKE.sf.307", "NWT_BCKE.sf.308", "NWT_BCKE.sf.309", "NWT_BCKE.sf.310", "NWT_BCKE.sf.311", "NWT_BCKE.sf.312", "NWT_BCKE.sf.313", "NWT_BCKE.sf.314", "NWT_BCKE.sf.315", "NWT_BCKE.sf.316", "NWT_BCKE.sf.317", "NWT_BCKE.sf.318", "NWT_BCKE.sf.319", "NWT_BCKE.sf.320", "NWT_BCKE.sf.321", "NWT_BCKE.sf.322", "NWT_BCKE.sf.323", "NWT_BCKE.sf.324", "NWT_BCKE.sf.325")
+```
+
+```{r}
+( tp2 = pts %>% filter(group2 =="tp2") )
+```
+```{r}
+tp2 %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+### TP3
+```{r}
+tp3 = c("NWT_BCKE.sf.10", "NWT_BCKE.sf.7", "NWT_BCKE.sf.8", "NWT_BCKE.sf.9", "NWT_BCKE.sf.11", "NWT_BCKE.sf.12", "NWT_BCKE.sf.13", "NWT_BCKE.sf.14", "NWT_BCKE.sf.15", "NWT_BCKE.sf.16", "BDG.sf.20", "BDG.sf.21", "BDG.sf.22", "BDG.sf.23", "BDG.sf.24", "BDG.sf.25", "BDG.sf.26", "BDG.sf.27", "BDG.sf.28", "BDG.sf.29", "BDG.sf.30", "BDG.sf.31", "NWT.sf.1", "NWT.sf.17", "NWT.sf.18", "NWT.sf.42", "NWT.sf.43", "NWT.sf.44", "NWT.sf.46", "NWT.sf.47", "NWT.sf.48", "NWT.sf.49", "NWT.sf.50", "NWT.sf.51", "NWT.sf.52", "NWT.sf.53", "NWT.sf.54", "NWT.sf.55", "NWT.sf.56", "NWT.sf.57", "NWT.sf.76", "NWT.sf.77", "NWT.sf.78", "NWT.sf.79", "NWT.sf.80", "NWT.sf.81", "NWT.sf.91", "NWT.sf.100", "NWT.sf.101", "NWT.sf.108", "NWT.sf.109", "NWT.sf.110", "NWT.sf.111", "NWT.sf.112", "NWT.sf.113", "NWT.sf.114", "NWT.sf.115", "NWT.sf.116", "NWT.sf.117", "NWT.sf.118", "NWT.sf.119", "NWT.sf.120", "NWT.sf.121", "NWT.sf.122", "NWT.sf.123", "NWT.sf.124", "NWT.sf.125", "NWT.sf.126", "NWT.sf.127", "NWT.sf.128", "NWT.sf.129", "NWT.sf.130", "NWT.sf.131", "NWT.sf.132", "NWT.sf.133", "NWT.sf.134", "NWT_BCKE.sf.45", "NWT_BCKE.sf.46", "NWT_BCKE.sf.47", "NWT_BCKE.sf.48", "NWT_BCKE.sf.49", "NWT_BCKE.sf.50", "NWT_BCKE.sf.51", "NWT_BCKE.sf.52", "NWT_BCKE.sf.53", "NWT_BCKE.sf.54", "NWT_BCKE.sf.55", "NWT_BCKE.sf.56", "NWT_BCKE.sf.57", "NWT_BCKE.sf.58", "NWT_BCKE.sf.59", "NWT_BCKE.sf.60", "NWT_BCKE.sf.61", "NWT_BCKE.sf.62", "NWT_BCKE.sf.63", "NWT_BCKE.sf.64", "NWT_BCKE.sf.65", "NWT_BCKE.sf.66", "NWT_BCKE.sf.67", "NWT_BCKE.sf.68", "NWT_BCKE.sf.69", "NWT_BCKE.sf.70", "NWT_BCKE.sf.71", "NWT_BCKE.sf.72", "NWT_BCKE.sf.73", "NWT_BCKE.sf.74", "NWT_BCKE.sf.75", "NWT_BCKE.sf.76", "NWT_BCKE.sf.77", "NWT_BCKE.sf.78", "NWT_BCKE.sf.79", "NWT_BCKE.sf.80", "NWT_BCKE.sf.81", "NWT_BCKE.sf.82", "NWT_BCKE.sf.83", "NWT_BCKE.sf.84", "NWT_BCKE.sf.85", "NWT_BCKE.sf.86", "NWT_BCKE.sf.87", "NWT_BCKE.sf.88", "NWT_BCKE.sf.89", "NWT_BCKE.sf.90", "NWT_BCKE.sf.91", "NWT_BCKE.sf.92", "NWT_BCKE.sf.93", "NWT_BCKE.sf.94", "NWT_BCKE.sf.95", "NWT_BCKE.sf.96", "NWT_BCKE.sf.97", "NWT_BCKE.sf.100", "NWT_BCKE.sf.101", "NWT_BCKE.sf.102", "NWT_BCKE.sf.103", "NWT_BCKE.sf.99", "NWT_BCKE.sf.104", "NWT_BCKE.sf.105", "NWT_BCKE.sf.106", "NWT_BCKE.sf.107", "NWT_BCKE.sf.108", "NWT_BCKE.sf.109", "NWT_BCKE.sf.110", "NWT_BCKE.sf.111", "NWT_BCKE.sf.112", "NWT_BCKE.sf.113", "NWT_BCKE.sf.114", "NWT_BCKE.sf.115", "NWT_BCKE.sf.116", "NWT_BCKE.sf.117", "NWT_BCKE.sf.118", "NWT_BCKE.sf.119", "NWT_BCKE.sf.120", "NWT_BCKE.sf.121", "NWT_BCKE.sf.122", "NWT_BCKE.sf.123", "NWT_BCKE.sf.124", "NWT_BCKE.sf.125", "NWT_BCKE.sf.126", "NWT_BCKE.sf.127", "NWT_BCKE.sf.128", "NWT_BCKE.sf.129", "NWT_BCKE.sf.130", "NWT_BCKE.sf.131", "NWT_BCKE.sf.132", "NWT_BCKE.sf.133", "NWT_BCKE.sf.134", "NWT_BCKE.sf.135", "NWT_BCKE.sf.136", "NWT_BCKE.sf.272")
+```
+
+```{r}
+pts %>% 
+  filter(project_id %in% tp3) %>%
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+### TSTP1
+```{r}
+( tstp1 = pts %>% filter(group2 =="tstp1") )
+```
+
+
+
+```{r}
+tstp1 %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
+
+### TS1
+```{r}
+( ts1 = pts %>% filter(group2 =="ts1") )
+```
+
+
+
+```{r}
+ts1 %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() +
+  theme(legend.position="none")
+  
+```
