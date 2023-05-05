@@ -35,6 +35,11 @@ l1 = st_read("../data/FirstLandscape/caribou_pker_ck.shp", "caribou_pker_ck")
 ```{r}
 l1
 ```
+```{r}
+st_crs(l1)
+```
+
+
 65.25555168123292, -147.4791419556817
 ```{r}
 
