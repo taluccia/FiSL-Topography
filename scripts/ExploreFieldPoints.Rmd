@@ -28,29 +28,53 @@ head(pts)
 ```{r}
 unique(pts$ecoregion)
 ```
+
+## Filter for groups
 ```{r}
-( ss= pts %>% filter(ecoregion =="Softwood Shield") )
-( sp = pts %>% filter(ecoregion =="Boreal Plains") )
+
+( yk = pts %>% filter(group1 =="YK") )
+ak = pts %>% filter(group1 =="AK")
+akyk = pts %>% filter(group1 %in% c("AK", "YK"))
 ```
 
+```{r}
+( ss1 = pts %>% filter(group2 =="ss1") )
+ss2 = pts %>% filter(group2 =="ss2")
+ssbp1 = pts %>% filter(group2 =="ssbp1")
+ssbp2 = pts %>% filter(group2 =="ssbp2")
+ts1 = pts %>% filter(group2 =="ts1")
+tstp1 = pts %>% filter(group2 =="tstp1")
+tp1 = pts %>% filter(group2 =="tp1")
+tp2 = pts %>% filter(group2 =="tp2")
+tp3 = pts %>% filter(group2 =="tp3")
+```
 
-
+# YK
 
 ```{r}
-ggplot() +  
-  geom_sf(data=pt_shield, color = "red") +
-  geom_sf(data=pt_plains, color = "blue") +
-  coord_sf() +
-  theme(legend.position="bottom")
-
+yk %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() 
+  
 ```
 ```{r}
-ggplot() +  
-  geom_sf(data=pt_shield, aes(colour=burn_year)) +
-  geom_sf(data=pt_plains, aes(colour=burn_year)) +
-  coord_sf() +
-  theme(legend.position="bottom")
+ak %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() 
+  
+```
 
+```{r}
+akyk %>% 
+  ggplot() +
+  geom_sf(aes(colour=ecoregion)) +
+  scale_color_viridis(discrete = TRUE) +
+  coord_sf() 
+  
 ```
 # SK
 ```{r}
