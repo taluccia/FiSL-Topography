@@ -13,59 +13,253 @@ plot points
 
 ```{r}
 library(tidyverse)
+library(car)
+library(multcomp)
 ```
 
 # Data
 
-
+```{r}
+eeTwi = read.csv("../data/PointTerrain/AllFieldTWI.csv")
+```
 
 ```{r}
-geeTwi = read.csv("../data/PointTerrain/AllFieldTWI.csv")
+saga = read.csv("../data/SagaPointTerrain/TerrainSagaAll.csv")
+```
+```{r}
+tagee = read.csv("../data/PointTerrain/TerrainTageeAll.csv")
 ```
 
 # Look at the table
-```{r}
-head(geeTwi)
-```
-# Dropp -9999
+## EE
 ```{r}
 (
-  geeTwi1 = geeTwi %>%
+  eeTwi1 = eeTwi %>%
+    filter(moisture != -9999) %>%
+    dplyr::select(-.geo, -system.index)
+)
+```
+
+## Saga
+```{r}
+(
+  saga1 = saga %>%
     filter(moisture != -9999)
 )
 ```
 
-# Figures
 ```{r}
 (
-  g1_twi = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
+  saga1 = saga %>%
+    filter(moisture != -9999)
+)
+```
+```{r}
+saga[is.na(saga$swil), ]
+```
+
+## TAGEE
+```{r}
+(
+  tagee1 = tagee %>%
+    filter(moisture != -9999)
+)
+```
+
+# Plots
+## EE
+```{r}
+(
+  e1 = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
     geom_boxplot() +
     geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
     labs(x="Soil moisture", 
          y="TWI",
-         subtitle = "Topographic Wetness Index")
+         subtitle = "EE Topographic Wetness Index")
   
 )
 ```
 
 ```{r}
-ggsave("../figures/Boxplots/AllFieldTWI.jpeg", plot = g1_twi,  dpi = 300)
+ggsave("../figures/Boxplots/AllFieldEETWI.jpeg", plot = e1,  dpi = 300)
 ```
 
 # Figures
 ```{r}
 (
-  g2_twi = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
+  e2 = ggplot(data = geeTwi1, aes(x=as.character(moisture), y=twi)) +
     geom_boxplot() +
     geom_jitter(color="black", size=0.4, alpha=0.9) +
     facet_wrap(~ecoregion) +
     labs(x="Soil moisture", 
          y="TWI",
-         subtitle = "Topographic Wetness Index")
+         subtitle = " EE Topographic Wetness Index")
   
 )
 ```
 
 ```{r}
-ggsave("../figures/Boxplots/AllFieldTWIbyEcoregion.jpeg", plot = g2_twi,  dpi = 300)
+ggsave("../figures/Boxplots/AllFieldEETWIbyEcoregion.jpeg", plot = e2,  dpi = 300)
+```
+
+## Saga
+
+### SWIL
+```{r}
+(
+s1 = ggplot(data = saga1, aes(x=as.character(moisture), y=swil)) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="SWIL",
+         subtitle = "SAGA Wetness Index")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGASWIL.jpeg", plot = s1,  dpi = 300)
+```
+
+```{r}
+( plot1 = ggplot(data = saga1, aes(x=as.character(moisture), y=swil)) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+  facet_wrap(~proj_name, scales = "free_y") +
+    labs(x="Soil moisture", 
+         y="SWIL",
+         subtitle = "SAGA Wetness Index")
+  
+)
+```
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGAWIbyOPerson.jpeg", plot = plot1,  dpi = 300)
+```
+
+```{r}
+(
+  s2 = ggplot(data = saga1, aes(x=as.character(moisture), y=swil)) +
+    geom_boxplot() +
+    geom_jitter(color="black", size=0.4, alpha=0.9) +
+    facet_wrap(~ecoregion, scales = "free_y") +
+    labs(x="Soil moisture", 
+         y="SWIL",
+         subtitle = "SAGA Wetness Index")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGAWIbyEcoregion.jpeg", plot = s2,  dpi = 300)
+```
+
+### Basic
+
+```{r}
+(
+s3 = ggplot(data = saga1, aes(x=as.character(moisture), y=aspect)) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Aspect",
+         subtitle = "SAGA Aspect")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGAAspect.jpeg", plot = s3,  dpi = 300)
+```
+
+```{r}
+(
+s4 = ggplot(data = saga1, aes(x=as.character(moisture), y=slope)) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Slope",
+         subtitle = "SAGA Slope")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGASlope.jpeg", plot = s4,  dpi = 300)
+```
+```{r}
+(
+s5 = ggplot(data = saga1, aes(x=as.character(moisture), y=log(cprof))) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Profile Curvature",
+         subtitle = "SAGA Profile Curvature")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGAcprof.jpeg", plot = s5,  dpi = 300)
+```
+```{r}
+(
+s6 = ggplot(data = saga1, aes(x=as.character(moisture), y=log(cplan))) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Plan Curvature",
+         subtitle = "SAGA Plan Curvature")
+  
+)
+```
+
+```{r}
+ggsave("../figures/Boxplots/AllFieldSAGAcplan.jpeg", plot = s6,  dpi = 300)
+```
+
+# Saga Anova
+```{r}
+saga2 = saga1 %>% mutate(moisture = as.factor(moisture))
+```
+```{r}
+swi.aov <- anova(lm(swil ~ moisture, data = saga2))
+swi.aov
+```
+
+```{r}
+model1<-lm(swil ~ moisture, data = saga2)
+```
+
+```{r}
+summary(model1)
+```
+
+# Tukey multiple comparisons
+```{r}
+summary(glht(model1, mcp(moisture="Tukey")))
+```
+## Plot TAGEE
+
+```{r}
+(
+t1 = ggplot(data = tagee1, aes(x=as.character(moisture), y=log(VerticalCurvature))) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Horizontal Curvature",
+         subtitle = "TAGEE Vertical Curvature")
+  
+)
+```
+
+```{r}
+(
+t2 = ggplot(data = tagee1, aes(x=as.character(moisture), y=log(HorizontalCurvature))) +
+    geom_boxplot() +
+    geom_jitter(aes(color=ecoregion), size=0.4, alpha=0.9)+
+    labs(x="Soil moisture", 
+         y="Horizontal Curvature",
+         subtitle = "TAGEE Horizontal Curvature")
+  
+)
 ```
