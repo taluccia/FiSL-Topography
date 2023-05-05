@@ -33,24 +33,24 @@ pts
 ## Filter for groups
 
 ```{r}
-( grouped_pts = pts %>% filter(group1 =="YK") )
+( grouped_pts = pts %>% filter(group1 %in% c("AK", "YK")) )
 ```
 
 # Rasters
 
 ## Make list from folder
 ```{r}
-rastlist <- list.files(path = "../data/SagaGeotiffs/swil", pattern='.tif$', all.files= T, full.names= T)
+rastlist <- list.files(path = "../data/SagaGeotiffs/akyk", pattern='.tif$', all.files= T, full.names= T)
 rastlist
 ```
 ## Select Raster from list
 ```{r}
-rast(rastlist[14])
+rast(rastlist[5])
 ```
 ## Read as raster
 This can create a stack or read a single raster depending on how many are listed.
 ```{r}
-raststk <- terra::rast(rastlist[14])
+raststk <- terra::rast(rastlist[5:8])
 ```
 
 ```{r}
@@ -59,6 +59,7 @@ raststk
 ## Extract point values
 ```{r}
 extractPts = terra::extract(raststk, grouped_pts)
+extractPts 
 ```
 
 ## Join extract point values back to the point attribute table
@@ -74,12 +75,12 @@ df <-
   
   #--- drop geometry ---#
   st_set_geometry(NULL) %>% 
-  rename(swil = SWIL_EA_YK )
+  rename(aspect = aspect_EA_akyk, cplan = cplan_EA_akyk, cprof = cprof_EA_akyk, slope = slope_EA_akyk)
 )
 ```
 
 ```{r}
-write.csv(df, file = "../outputs/PointTerrain/extractTerrainSagaSwilYK.csv", row.names=FALSE)
+write.csv(df, file = "../outputs/SagaPointTerrain/extractTerrainSagaBasicakyk.csv", row.names=FALSE)
 ```
 
 
