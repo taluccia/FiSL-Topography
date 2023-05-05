@@ -83,66 +83,37 @@ projection
 
 # Masaic with Terra 
 
-## Yukon 
+
+## Alaska & Yukon
 ### Make list of rasters
 ```{r}
-yk_rlist <- list.files(path ="../data/DEMs/DEMFieldYK/",pattern = ".tif$",full.names = TRUE )
+akyk_rlist <- list.files(path ="../data/DEMs/DEMFieldAKYK/",pattern = ".tif$",full.names = TRUE )
+akyk_rlist
 ```
 
 ### Define as rasters
 ```{r}
-yk_r <- lapply(yk_rlist,   rast)
-```
-
-###  Make a spatial raster collection
-```{r}
-yk_rsrc <- sprc(yk_r)
-```
-
-###  Mosaic
-```{r}
-yk_m <- mosaic(yk_rsrc)
-```
-
-### Reproject to Equal area
-```{r}
-yk_ea = project(yk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
-```
-
-### Save Raster Mosaic
-```{r}
-writeRaster(yk_ea, filename="../outputs/FieldDEM/FABDEM_EA_YK.tif", overwrite = TRUE)
-```
-
-## Alaska
-### Make list of rasters
-```{r}
-ak_rlist <- list.files(path ="../data/DEMs/DEMFieldAK/",pattern = ".tif$",full.names = TRUE )
-```
-
-### Define as rasters
-```{r}
-ak_r <- lapply(ak_rlist, rast)
+akyk_r <- lapply(akyk_rlist, rast)
 ```
 
 ### Make a spatial raster collection
 ```{r}
-ak_rsrc <- sprc(ak_r)
+akyk_rsrc <- sprc(akyk_r)
 ```
 
 ###  Mosaic
 ```{r}
-ak_m <- mosaic(ak_rsrc)
+akyk_m <- mosaic(akyk_rsrc)
 ```
 
 ### Reproject to Equal area
 ```{r}
-ak_ea = project(ak_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
+akyk_ea = project(akyk_m, "+proj=aea +lat_0=40 +lon_0=-96 +lat_1=50 +lat_2=70 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs", res=30)
 ```
 
 ### Save Raster Mosaic
 ```{r}
-writeRaster(ak_ea, filename="../outputs/FieldDEM/FABDEM_EA_AK.tif", overwrite = TRUE)
+writeRaster(akyk_ea, filename="../outputs/FieldDEM/FABDEM_EA_akyk.tif", overwrite = TRUE)
 ```
 
 ## NWT
