@@ -29,6 +29,13 @@ pts
 ```
 
 ## Filter for groups
+```{r}
+
+( yk = pts %>% filter(group1 =="YK") )
+
+ak = pts %>% filter(group1 =="AK") 
+akyk = pts %>% filter(group1 %in% c("AK", "YK")) 
+```
 
 ```{r}
 ( ss1 = pts %>% filter(group2 =="ss1") )
@@ -59,15 +66,18 @@ r <- lapply(subgrouprastlist, rast)
 
 
 ```{r}
-r_ss1 <- terra::rast(r[4])
-r_ss2 <- terra::rast(r[5])
-r_ssbp1 <- terra::rast(r[6])
-r_ssbp2 <- terra::rast(r[7])
-r_tp1 <- terra::rast(r[8])
-r_tp2 <- terra::rast(r[9])
-r_tp3 <- terra::rast(r[10])
+r_ak <- terra::rast(r[1])
+r_akyk <- terra::rast(r[2])
+r_ss1 <- terra::rast(r[5])
+r_ss2 <- terra::rast(r[6])
+r_ssbp1 <- terra::rast(r[7])
+r_ssbp2 <- terra::rast(r[8])
+r_tp1 <- terra::rast(r[9])
+r_tp2 <- terra::rast(r[10])
+r_tp3 <- terra::rast(r[11])
 r_ts1 <- terra::rast(r[11])
 r_tstp1 <- terra::rast(r[12])
+r_yk <- terra::rast(r[13])
 ```
 
 # Plot DEM
@@ -124,4 +134,15 @@ plot(st_geometry(ts1), add=TRUE)
 ```{r}
 plot(r_tstp1)
 plot(st_geometry(tstp1), add=TRUE)
+```
+
+## YK
+```{r}
+plot(r_yk)
+plot(st_geometry(yk))
+```
+## AKYK
+```{r}
+plot(r_akyk)
+plot(st_geometry(akyk), add=TRUE)
 ```
