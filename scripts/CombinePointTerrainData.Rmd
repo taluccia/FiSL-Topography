@@ -22,12 +22,56 @@ csvList
 ## Select Raster from list
 ```{r}
 ( 
-  basicDf <- read_csv(csvList[2:5]) %>% bind_rows()
+  basicDf <- read_csv(csvList[3:5]) %>% bind_rows()
 )
 ```
 
 ```{r}
 ( 
-  swilDf <- read_csv(csvList[6:12]) %>% bind_rows()
+  swilDf <- read_csv(csvList[8:17]) %>% 
+    bind_rows() %>%
+    dplyr::select(project_id, swil)
 )
+```
+
+```{r}
+( 
+  df = left_join(basicDf, swilDf, by = "project_id")  
+)
+```
+
+
+```{r}
+write.csv(df, file = "../outputs/SagaPointTerrain/TerrainSagaAll.csv", row.names=FALSE)
+```
+
+
+# Data TAGEE
+```{r}
+eeList <- list.files(path = "../data/FABDemTagee", pattern='.csv$', all.files= T, full.names= T)
+eeList
+```
+
+## Select Raster from list
+```{r}
+read_csv("../data/FABDemTagee/akTAGEE.csv") 
+```
+
+```{r}
+read_csv(eeList[16]) 
+```
+
+
+
+```{r}
+( 
+  eeDf <- read_csv(eeList[c(14, 17:26)]) %>% 
+    bind_rows() %>%
+    dplyr::select(project_id, proj_name,site, treatment, burn_name:moisture, Aspect:VerticalCurvature)
+)
+```
+
+
+```{r}
+write.csv(eeDf, file = "../outputs/PointTerrain/TerrainTageeAll.csv", row.names=FALSE)
 ```
